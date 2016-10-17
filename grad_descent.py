@@ -1,69 +1,54 @@
 import numpy as np
-from numpy import Inf
-import copy
 import math
 
-def compute_numerical_grad(func, num_vars,epsilon=1e-10):
-    def grad(x, *args):
-    	res = np.array([0.0]*num_vars)
-    	x_new = np.array([0.0]*num_vars)
-    	for i in range(num_vars):
-    		x_new = copy.copy(x)
-    		x_new[i] += epsilon  
-    		res[i] = (np.array(func(np.array(x_new), *args)) - np.array(func(np.array(x), *args)))/epsilon
-        return res
-    return grad
-'''
-def f1(x, m):
-    return m[0]*x[0] + m[1]*x[1]**2
-def f2(x, m):
-    return m[0]*x[0]**2 + m[1]*x[1]**3
-grad_f1 = compute_numerical_grad(f1, 2)
-grad_f2 = compute_numerical_grad(f2, 2)
+import helper as hlp
 
-print(grad_f1([1,1], [1,1]))
-print(grad_f2([1,1], [1,1]))
-'''
-
-def vecnorm(x, order=2):
-    if order == Inf:
-        return np.amax(np.abs(x))
-    elif order == -Inf:
-        return np.amin(np.abs(x))
-    else:
-        return np.sum(np.abs(x)**order, axis=0)**(1.0 / order)
-
-def grad_descent(func, x0, args=(), fprime=None, alpha=0.02, numIter=1e5, norm=1e-6, epsilon=1e-10, order=2, disp=True):
+def grad_descent(func, x0, args=(), fprime=None, alpha=0.02, adaptive=False, beta=0.8, numIter=1e5, norm_lim=1e-6, epsilon=1e-10, order=2, disp=True, period=10000):
 	if fprime == None :
-		fprime = compute_numerical_grad(func, len(x0),epsilon)
+		fprime = hlp.compute_numerical_grad(func, len(x0),epsilon)
 
 	iters = 0
 	func_value = func(x0, *args)
 	gradient = np.array(fprime(x0, *args))
-	norm_gradient = vecnorm(gradient)
+	norm_gradient = hlp.vecnorm(gradient, order)
 	x = np.array(x0)
 
-	while norm_gradient > norm and iters < numIter :
+	while norm_gradient > norm_lim and iters < numIter :
 		iters += 1
-		if disp :
-			print("Iter : %d | Function value : %d" %(iters, func_value	))
+		if disp and iters%period == 0 or iters == 1:
+			print("Iter : %d | Function value : %f" %(iters, func_value))
+			print(alpha)
+
+		if adaptive:
+			alpha = 0.5
+			while func(x-alpha*gradient) > func(x) :
+				alpha = beta*alpha
 
 		x = x - alpha*gradient
 		func_value = func(x, *args)
 		gradient = np.array(fprime(x, *args))
-		norm_gradient = vecnorm(gradient)
+		norm_gradient = hlp.vecnorm(gradient, order)
+	if disp and iters%period != 0:
+		print("Iter : %d | Function value : %f" %(iters, func_value))
 	return x	
 
 def func(x):        
-	return pow(x[0]-2,2.0)+pow(abs(x[1])-3,3.0)	
+	return pow(x[0]-2,2.0)+pow(x[1]-3,4.0)	
 
 def func_grad(x):
 	g = [0,0]
-	g[0] = 2.0*x[0]
-	g[1] = 3.0*pow(abs(x[1]),2.0)
-	if x[1] < 0:
-		g[1] = -g[1]
+	g[0] = 2.0*(x[0]-2)
+	g[1] = 4.0*pow(x[1]-3,3.0)
 	return g
 
-x = grad_descent(func, [-7,3], order=3)#, fprime=func_grad)
-print(x)
+grad_func = hlp.compute_numerical_grad(func, 2)
+x = [-6.640022,-8.27999006]
+'''
+print(type(func([x[0]+1e-10, x[1]])))
+print(func([x[0]+1e-10, x[1]]), func(x))
+print((func([x[0]+1e-10, x[1]]) -func(x) )/1e-10, '\n')
+print(grad_func(x))
+print(func_grad(x), '\n')
+'''
+x = grad_descent(func, [-7,9], fprime=func_grad, adaptive = True)
+print('\n', x)
