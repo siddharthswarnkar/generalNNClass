@@ -2,7 +2,7 @@ import helper as hlp
 import numpy as np
 import math
 
-def conjugateGradient(func, x0, args=(), fprime=None, alpha=0.02, scaling_factor=0.8, numIter=1e5, norm_lim=1e-6, epsilon=1e-10, order=2, disp=True, period=10000):
+def conjugateGradient(func, x0, args=(), fprime=None, alpha=0.5, scaling_factor=0.8, numIter=1e5, norm_lim=1e-7, epsilon=1e-10, order=2, disp=True, period=10000):
 	if fprime == None:
 		fprime = hlp.compute_numerical_grad(func, len(x0),epsilon)
 
@@ -17,15 +17,15 @@ def conjugateGradient(func, x0, args=(), fprime=None, alpha=0.02, scaling_factor
 	while norm_gradient > norm_lim and iters < numIter :
 		iters +=1
 
-		if disp and iters%period == 0 or iters == 1:
+		if disp and (iters%period == 0 or iters == 1):
 			print("Iter : %d | Function value : %f" %(iters, func_value))
 			print(alpha)
 
-		alpha = alpha
-		while func(xPrev + alpha*pPrev) > fucn(xPrev):
-			alpha *= scaling_factor
+		alp = alpha
+		while func(xPrev + alp*pPrev) > func(xPrev):
+			alp *= scaling_factor
 
-		xUpdated = xPrev + alpha*pPrev
+		xUpdated = xPrev + alp*pPrev
 
 		gUpdated = np.array(fprime(xUpdated,*args))
 		betaUpdated = np.dot(gUpdated,gUpdated)/np.dot(gPrev,gPrev)
@@ -51,7 +51,6 @@ def func_grad(x):
 	return g
 
 grad_func = hlp.compute_numerical_grad(func, 2)
-x = [-6.640022,-8.27999006]
 
-x = grad_descent(func, [-7,9], fprime=func_grad, adaptive = True)
+x = conjugateGradient(func, [-4000,7], fprime=func_grad)
 print('\n', x)
