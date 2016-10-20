@@ -1,17 +1,37 @@
 import helper as hlp
 import numpy as np
 
-def conjugate_gradient(func, x0, args=(), fprime=None, alpha=0.5, scaling_factor=0.8, numIter=1e5, norm_lim=1e-7, epsilon=1e-10, order=2, disp=True, period=10000):
+def conjugate_gradient(func, x0, args=(), fprime=None, alpha=0.5, scaling_factor=0.8, 
+						numIter=1e5, norm_lim=1e-7, epsilon=1e-10, order=2, disp=False, period=10000):
+	'''Conjugate descent algorithm to optimize the cost function using Fletcher-Reeves Update
+	Usage:
+		func = function to be optimized
+		x0   = initial guess
+		args = other arguments to be passed to func
+		fprime = derivative or jacobian of func, if not passed then will be generated automatically
+		alpha  = learning rate
+		scaling_factor = factor to multiply alpha with when doing line search
+		numIter = number of iterations
+		norm_lim = minimum value of norm
+		epsilon = delta x for calculting fprime
+		order = order of norm, max value = Inf
+	Example:
+		def simple_func(x):        
+			return pow(x[0]-2,6.0)+pow(x[1]-3,6.0)
+		x0 = [1,2]
+		point_of_optima = conjugate_gradient(func,x0)
+	'''
+
 	if fprime == None:
 		fprime = hlp.compute_numerical_grad(func, len(x0),epsilon)
 
 	iters = 0
 	func_value = func(x0, *args)
-	gPrev = np.array(fprime(x0, *args))
-	norm_gradient = hlp.vecnorm(gPrev, order)
+	gradient_prev = np.array(fprime(x0, *args))
+	norm_gradient = hlp.vecnorm(gradient_prev, order)
 	xPrev = np.array(x0)
 
-	pPrev = -gPrev
+	pPrev = -gradient_prev
 
 	while norm_gradient > norm_lim and iters < numIter :
 		iters +=1
@@ -23,15 +43,15 @@ def conjugate_gradient(func, x0, args=(), fprime=None, alpha=0.5, scaling_factor
 			alp *= scaling_factor
 
 		xUpdated = xPrev + alp*pPrev
-		gUpdated = np.array(fprime(xUpdated,*args))
-		betaUpdated = np.dot(gUpdated,gUpdated)/np.dot(gPrev,gPrev)
-		pUpdated = -gUpdated + betaUpdated*pPrev
+		gradient_updated = np.array(fprime(xUpdated,*args))
+		betaUpdated = np.dot(gradient_updated,gradient_updated)/np.dot(gradient_prev,gradient_prev)
+		pUpdated = -gradient_updated + betaUpdated*pPrev
 		
 		func_value = func(xUpdated, *args)
-		norm_gradient = hlp.vecnorm(gUpdated, order)
+		norm_gradient = hlp.vecnorm(gradient_updated, order)
 
 		pPrev = pUpdated
-		gPrev = gUpdated
+		gradient_prev = gradient_updated
 		xPrev = xUpdated
 	if disp and iters%period != 0:
 		print("Iter : %d | Function value : %f" %(iters, func_value))
