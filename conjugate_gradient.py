@@ -15,10 +15,8 @@ def conjugate_gradient(func, x0, args=(), fprime=None, alpha=0.5, scaling_factor
 
 	while norm_gradient > norm_lim and iters < numIter :
 		iters +=1
-
-		
-		#if disp and (iters%period == 0 or iters == 1):
-		#	print("Iter : %d | Function value : %f" %(iters, func_value))
+		if disp and (iters%period == 0 or iters == 1):
+			print("Iter : %d | Function value : %f" %(iters, func_value))
 
 		alp = alpha
 		while func(xPrev + alp*pPrev, *args) > func(xPrev, *args):

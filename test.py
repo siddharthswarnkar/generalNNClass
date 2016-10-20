@@ -1,7 +1,7 @@
 from __future__ import division
 from conjugate_gradient import conjugate_gradient as CG
 import grad_descent
-import hypothesis
+from hypothesis import given, strategies
 import numpy as np
 from scipy.optimize import fmin_cg
 import unittest
@@ -10,7 +10,7 @@ import pytest
 
 
 def simple_func(x):        
-	return pow(x[0]-2,6.0)/1000.0+pow(x[1]-3,6.0)/1000.0
+	return pow(x[0]-2,6.0)+pow(x[1]-3,6.0)
 
 def func_grad(x):
 	g = [0,0]
@@ -37,40 +37,41 @@ class TestOptimization(unittest.TestCase):
 
 ###################### for conjugate descent #################
 
-	'''def test_something(self):
-		x = CG(simple_func,[20,20], alpha=0.5,period=10,norm_lim=1e-7,order=2)
-		self.assertAlmostEqual(x[0],2.10, 2)
-		self.assertAlmostEqual(x[1],2.90, 2) 
+	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
+	def test_simple_func_with_conjugate(self,initial_x, initial_y):
+		x = CG(simple_func,[initial_x, initial_y], alpha=0.04,period=10,norm_lim=1e-7,order=2, disp=False)
+		self.assertAlmostEqual(x[0],2.0, delta=0.03)
+		self.assertAlmostEqual(x[1],3.0, delta=0.03)
 
-	def test_least_square_cost(self):
-		x = CG(least_square_cost,[30,100],alpha=0.5,period=10,norm_lim=1e-7,order=2)
-		self.assertAlmostEqual(x[0],1.05,2)
-		self.assertAlmostEqual(x[1],-0.14,2)
+	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
+	def test_least_square_cost_with_conjugate(self,initial_x, initial_y):
+		x = CG(least_square_cost,[30,100],alpha=0.5,period=10,norm_lim=1e-7,order=2,disp=False)
+		self.assertAlmostEqual(x[0],1.05, delta=0.03)
+		self.assertAlmostEqual(x[1],-0.14, delta=0.03)
 
-	def test_some_complex_func(self):
-		x = CG(some_complex_func,[30,100],alpha=0.5,period=10,norm_lim=1e-7,order=2)
-		self.assertAlmostEqual(x[0], 0.215, 3)
-		self.assertAlmostEqual(x[1], 2.31, 2)'''
+	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
+	def test_some_complex_func_with_conjugate(self,initial_x, initial_y):
+		x = CG(some_complex_func,[30,100],alpha=0.5,period=10,norm_lim=1e-7,order=2,disp=False)
+		self.assertAlmostEqual(x[0], 0.215, delta=0.03)
+		self.assertAlmostEqual(x[1], 2.31, delta=0.03)
 
 ##################### for gradient descent ##################
+	
+	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
+	def test_simple_with_grad_descent(self, initial_x, initial_y):
+		x = grad_descent.grad_descent(simple_func,[initial_x, initial_y], adaptive=True, alpha=0.01,period=10,norm_lim=1e-7,order=2)
+		self.assertAlmostEqual(x[0],2.0, delta=0.05 )
+		self.assertAlmostEqual(x[1],3.0, delta=0.05)
 
-	def test_something(self):
-		x = grad_descent.grad_descent(simple_func,[20,20], adaptive=True, alpha=0.01,period=10,norm_lim=1e-7,order=2)
-		self.assertAlmostEqual(x[0],2.10, 2)
-		self.assertAlmostEqual(x[1],2.90, 2) 
-
-	def test_least_square_cost(self):
+	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
+	def test_least_square_cost_with_grad_descent(self, initial_x, initial_y):
 		x = grad_descent.grad_descent(least_square_cost,[30,100], adaptive=True, alpha=0.05,period=10,norm_lim=1e-7,order=2)
-		self.assertAlmostEqual(x[0],1.05,2)
-		self.assertAlmostEqual(x[1],-0.14,2)
+		self.assertAlmostEqual(x[0],1.05, delta=0.03)
+		self.assertAlmostEqual(x[1],-0.14, delta=0.03)
 
-	def test_some_complex_func(self):
+	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
+	def test_some_complex_func_with_grad_descent(self, initial_x, initial_y):
 		x = grad_descent.grad_descent(some_complex_func,[30,100], adaptive=True ,alpha=0.05,period=10,norm_lim=1e-7,order=2)
-		self.assertAlmostEqual(x[0], 0.215, 3)
-		self.assertAlmostEqual(x[1], 2.31, 2)
+		self.assertAlmostEqual(x[0], 0.215, delta=0.03)
+		self.assertAlmostEqual(x[1], 2.31, delta=0.03)
 
-param = [20,20]
-#x2 = fmin_cg(simple_func,param, gtol=1e-7, norm=2)
-#print 'fmin_cg', x2
-x = grad_descent.grad_descent(simple_func,param, alpha=0.01,period=10,norm_lim=1e-5,order=2)
-print 'apdna', x
