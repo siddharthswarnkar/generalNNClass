@@ -41,17 +41,6 @@ def func_grad(x):
 	g[0] = 2.0*(x[0]-2)
 	g[1] = 4.0*pow(x[1]-3,3.0)
 	return g
-'''
-grad_func = hlp.compute_numerical_grad(func, 2)
-x = [-6.640022,-8.27999006]
-print(type(func([x[0]+1e-10, x[1]])))
-print(func([x[0]+1e-10, x[1]]), func(x))
-print((func([x[0]+1e-10, x[1]]) -func(x) )/1e-10, '\n')
-print(grad_func(x))
-print(func_grad(x), '\n')
-'''
-x = grad_descent(func, [-7,9], fprime=func_grad, adaptive = True)
-print('\n', x)
 
 if __name__ == "__main__":
 	pass
