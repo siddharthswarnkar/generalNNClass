@@ -1,6 +1,5 @@
 import numpy as np
 import math
-
 import helper as hlp
 
 def grad_descent(func, x0, args=(), fprime=None, alpha=0.02, adaptive=False,\
@@ -19,7 +18,6 @@ def grad_descent(func, x0, args=(), fprime=None, alpha=0.02, adaptive=False,\
 		iters += 1
 		if disp and (iters%period == 0 or iters == 1):
 			print("Iteration : %d | Function value : %f" %(iters, func_value))
-
 		if adaptive:
 			alpha = 0.5
 			while func(x-alpha*gradient) > func(x) :
@@ -33,14 +31,5 @@ def grad_descent(func, x0, args=(), fprime=None, alpha=0.02, adaptive=False,\
 		print("Iteration : %d | Function value : %f" %(iters, func_value))
 	return x	
 
-def func(x):        
-	return pow(x[0]-2,2.0)+pow(x[1]-3,4.0)	
-
-def func_grad(x):
-	g = [0,0]
-	g[0] = 2.0*(x[0]-2)
-	g[1] = 4.0*pow(x[1]-3,3.0)
-	return g
-
-if __name__ == "__main__":
+if __name__ == '__main__':
 	pass
