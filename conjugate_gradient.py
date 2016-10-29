@@ -16,7 +16,7 @@ def conjugate_gradient(func, x0, args=(), fprime=None, alpha=0.5, scaling_factor
 		epsilon = delta x for calculting fprime
 		order = order of norm, max value = Inf
 	Example:
-		def simple_func(x):        
+		def func(x):        
 			return pow(x[0]-2,6.0)+pow(x[1]-3,6.0)
 		x0 = [1,2]
 		point_of_optima = conjugate_gradient(func,x0)
