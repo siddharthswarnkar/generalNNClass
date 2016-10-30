@@ -63,31 +63,31 @@ class TestOptimization(unittest.TestCase):
 	##################### for gradient descent ##################
 	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
 	def test_simple_with_grad_descent(self, initial_x, initial_y):
-		x = grad_descent.grad_descent(simple_func,[initial_x, initial_y], adaptive=True, alpha=0.01,norm_lim=1e-7)
+		x = grad_descent.grad_descent(simple_func,[initial_x, initial_y], adaptive=True, norm_lim=1e-7)
 		self.assertAlmostEqual(x[0],2.0, delta=0.05 )
 		self.assertAlmostEqual(x[1],3.0, delta=0.05)
 
 	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
 	def test_least_square_cost_with_grad_descent(self, initial_x, initial_y):
-		x = grad_descent.grad_descent(least_square_cost,[30,100], adaptive=True, alpha=0.05,norm_lim=1e-7)
+		x = grad_descent.grad_descent(least_square_cost,[30,100], adaptive=True, norm_lim=1e-7)
 		self.assertAlmostEqual(x[0],1.05, delta=0.03)
 		self.assertAlmostEqual(x[1],-0.14, delta=0.03)
 
 	@given(strategies.floats(min_value =-20, max_value = 20), strategies.floats(min_value = -20, max_value = 20))
 	def test_some_complex_func_with_grad_descent(self, initial_x, initial_y):
-		x = grad_descent.grad_descent(some_complex_func,[30,100], adaptive=True ,alpha=0.05,norm_lim=1e-7)
+		x = grad_descent.grad_descent(some_complex_func,[30,100], adaptive=True, norm_lim=1e-7)
 		self.assertAlmostEqual(x[0], 0.215, delta=0.03)
 		self.assertAlmostEqual(x[1], 2.31, delta=0.03)
 
 	########################### for compute_numerical_grad ########################
-	@given(strategies.floats(min_value=-10000,max_value=10000), strategies.floats(min_value=-10000,max_value=10000))
-	def test_compute_numerical_grad(self,x,y):
-		numerical_grad_of_some_complex_func = hlp.compute_numerical_grad(some_complex_func,2)
+	@given(strategies.floats(min_value=-10000,max_value=10000), strategies.floats(min_value=-10000, max_value=10000))
+	def test_compute_numerical_grad(self, x, y):
+		numerical_grad_of_some_complex_func = hlp.compute_numerical_grad(some_complex_func, 2)
 		self.assertAlmostEqual(numerical_grad_of_some_complex_func([x,y]).all(), grad_of_some_complex_func([x,y]).all(), delta=0.1)
 
 	########################## for vector norm callculating function vecnorm#######
 	def test_vecnorm(self):
 		vector = [1,2,3,4,5]
 		self.assertAlmostEqual(hlp.vecnorm(vector),np.sqrt(55))
-		self.assertAlmostEqual(hlp.vecnorm(vector,order=np.Inf),5)
-		self.assertAlmostEqual(hlp.vecnorm(vector,order=-np.Inf),1)
+		self.assertAlmostEqual(hlp.vecnorm(vector,order=np.Inf), 5)
+		self.assertAlmostEqual(hlp.vecnorm(vector,order=-np.Inf), 1)
