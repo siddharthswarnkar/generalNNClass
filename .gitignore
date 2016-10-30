@@ -1,4 +1,12 @@
 *pyc*
 *Untitled*
 *checkpoints
+*.aux
+*.toc
+*.nav
+*.log
+*.pdf
+*.snm
+*.out
+*.synctex*
 *.pdf
