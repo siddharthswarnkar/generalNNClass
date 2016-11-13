@@ -6,7 +6,8 @@ import node as nd
 import math
 
 class neural_network(object):
-	def __init__(self, num_layers, list_of_layers, activation_func='sigmoid'):
+	def __init__(self, list_of_layers, activation_func='sigmoid'):
+		num_layers = len(list_of_layers)
 		self.num_layers = num_layers
 		self.list_of_layers = list_of_layers
 		self.activation_func = activation_func
@@ -22,4 +23,3 @@ class neural_network(object):
 				temp = [nd.node(list_of_layers[i-1], activation_func) for j in range(list_of_layers[i])]			
 
 			self.nodes.append(temp)	
-	
