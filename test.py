@@ -52,13 +52,6 @@ class TestActivation(unittest.TestCase):
 		self.assertAlmostEqual(nd.sigmoid(theta, x), 0.9999898700090192, places = 10)
 		self.assertAlmostEqual(nd.sigmoid(-theta, x), 1.0129990980873921e-05, places = 10)
 	
-	# testing step 
-	def test_step(self):
-		theta = np.array([1, 2, 3, 4, 5])
-		x = np.array([.5, .6, .7, .8, .9])
-		self.assertEqual(nd.step(theta, x), 1)	
-		self.assertEqual(nd.step([1],[-1]), 0)
-	
 	# testing tanh
 	def test_tanh(self):
 		theta = np.array([1, 2, 3, 4, 5])

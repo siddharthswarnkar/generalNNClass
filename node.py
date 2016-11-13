@@ -5,12 +5,6 @@ import random
 def sigmoid(theta, x):
 	return 1/(1 + math.exp(-np.dot(np.array(theta), np.array(x))))
 
-def step(theta, x):
-	if np.dot(np.array(theta), np.array(x)) > 0 :
-		return 1
-	else :
-		return 0
-
 def tanh(theta, x):
 	t = np.dot(np.array(theta), np.array(x))
 	return (math.exp(t) - math.exp(-t))/(math.exp(t) + math.exp(-t)) 
@@ -22,24 +16,41 @@ class DotProductError(Exception):
     print('Vectors dimensions does not match')
 
 class node(object):
-	def __init__(self, n):
-		self.theta = [randrange(-0.1,0.1) for i in range(n)]
-		self.activation_func = 'sigmoid'
-
-	def __init__(self, theta, activation_func):
-		self.theta = theta
+	def __init__(self, n=0, activation_func='sigmoid', bias=False, inpt=False):
+		self.theta = [random.uniform(-0.1,0.1) for i in range(n)]
 		self.activation_func = activation_func
+		self.bias = False
+		self.inpt = False
+		if bias:
+			self.theta = None
+			self.activation_func = None
+			self.bias = True
+			self.inpt = False
+		elif inpt:
+			self.theta = None
+			self.activation_func = 'input'
+			self.bias = False
+			self.inpt = True
 
-	def compute_output(self, x):
-		if len(x) != len(theta):
-			raise DotProductError
+	def change_theta(self, theta):
+		self.theta = theta
 
-		if activation_func == 'sigmoid':
-			return sigmoid(theta, x)
-		elif activation_func == 'step':
-			return step(theta, x)
-		elif activation_func == 'tanh':
-			return tanh(theta, x)	
+	def compute_output(self, x=None):
+		if not self.bias:
+			if not self.inpt:
+				if len(x) != len(self.theta):
+					raise DotProductError	
+
+			if self.activation_func == 'sigmoid':
+				return sigmoid(self.theta, x)
+			elif self.activation_func == 'tanh':
+				return tanh(self.theta, x)
+			elif self.activation_func == 'input':
+				return x
+					
+		else:
+			return 1
+				
 
 if __name__ == '__main__':
 	pass			
