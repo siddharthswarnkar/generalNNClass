@@ -35,6 +35,9 @@ class node(object):
 	def change_theta(self, theta):
 		self.theta = theta
 
+	def get_theta(self):
+		return self.theta
+
 	def compute_output(self, x=None):
 		if not self.bias:
 			if not self.inpt:
