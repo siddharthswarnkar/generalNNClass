@@ -3,11 +3,11 @@ import math
 import random 
 
 def sigmoid(theta, x):
-	return 1/(1 + math.exp(-np.dot(np.array(theta), np.array(x))))
+	return 1/(1 + np.exp(-np.dot(np.array(theta), np.array(x))))
 
 def tanh(theta, x):
 	t = np.dot(np.array(theta), np.array(x))
-	return (math.exp(t) - math.exp(-t))/(math.exp(t) + math.exp(-t)) 
+	return (np.exp(t) - np.exp(-t))/(np.exp(t) + np.exp(-t)) 
 
 #def softmax(theta, x):
 

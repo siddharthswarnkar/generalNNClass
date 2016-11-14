@@ -51,9 +51,11 @@ class neural_network(object):
 		return mat
 
 	def change_network_theta(self, list_of_theta_mat):
-		for i,theta_mat in enumerate(list_of_theta_mat):
-			for j,node in enumerate(self.nodes[i+1]):
+		for i,theta_mat in enumerate(list_of_theta_mat[:-1]):
+			for j,node in enumerate(self.nodes[i+1][1:]):
 				node.change_theta(theta_mat[j])
+		for j,node in enumerate(self.nodes[-1]):
+				node.change_theta(list_of_theta_mat[-1][j])
 
 	def roll_mat(self,list_of_mat):
 		vector = []
@@ -66,7 +68,6 @@ class neural_network(object):
 	def unroll_vector(self,theta_vector):
 	    list_of_theta_mat = []
 	    start = 0
-	    num_layers = len(list_of_layers)
 	    list_of_layers = self.list_of_layers
 	    for i in range(1,self.num_layers):
 	        theta_mat = []
@@ -82,20 +83,41 @@ class neural_network(object):
 	        start += size
 	    return list_of_theta_mat
 
-	def back_propogation(self, input, target, list_of_theta_mat):
+	def back_propogation(self, input, target, regularization=0):
 		"""Input consist of list of list of trainging data
 		each row is an example"""
-
-		theta_vector = roll_mat(list_of_theta_mat)
+		len_of_input = len(input)
 		def grad(self, theta_vector, *args):
-			self.change_network_theta(unroll_vector(theta_vector))
+			if self.activation_func == 'sigmoid':
+				activation = getattr(nd,'sigmoid')
+			elif self.activation_func == 'tanh':
+				activation = getattr(nd, 'tanh')
+
+			list_of_theta_mat = self.unroll_vector(theta_vector)
+			self.change_network_theta(list_of_theta_mat)
 			delta = []
+			Delta = []
+			for matrix in list_of_theta_mat:
+				row,col = np.matrix(matrix).shape
+				delta.append(np.zeros((row,col)))
+				Delta.append(np.zeros((row,col)))
+			Delta = np.array(Delta)
+			delta = np.array(delta)
+
 			error_matrix = [0]*(self.num_layers)
 			for input_array in input:
-				activation_matrix = forward_propogation(input_array)
+				activation_matrix = self.forward_propogation(input_array)
 				error_matrix[self.num_layers-1] = np.array(activation_matrix[-1]) - np.array(target)
-				#for i in range(self.num_layers-2,0,-1):
-				#	error_matrix[i] = 
+				for i in range(self.num_layers-2,0,-1):
+					error_matrix[i] = np.dot(np.array(list_of_theta_mat[i]).T,error_matrix[i+1])*\
+					activation(list_of_theta_mat[i],activation_matrix[i])*(1-activation(list_of_theta_mat[i],activation_matrix[i]))
+
+					delta[i] = delta[i] + np.matrix(error_matrix[i+1]).T*np.matrix(activation_matrix[i])
+			#Delta = delta+regularization*np.array(list_of_theta_mat)
+			for ind, del_mat in enumerate(Delta):
+				Delta[ind][1:] = delta[1:] + regularization*np.array(list_of_theta_mat)[ind][1:]
+			return roll_mat(Delta)
+
 
 
 
