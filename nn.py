@@ -73,7 +73,7 @@ class neural_network(object):
 	        theta_mat = []
 	        size = list_of_layers[i]*(list_of_layers[i-1]+1)
 	        theta_rolled = theta_vector[start:start+size]
-	        print(i,' ',start,' ',size, " ", theta_rolled)
+	        #print(i,' ',start,' ',size, " ", theta_rolled)
 	        for row in range(list_of_layers[i]):
 	            temp = []
 	            for col in range(list_of_layers[i-1]+1):
@@ -83,15 +83,15 @@ class neural_network(object):
 	        start += size
 	    return list_of_theta_mat
 
-	def back_propogation(self, input, target, regularization=0):
-		"""Input consist of list of list of trainging data
+	def back_propogation(self, data, target, regularization=0.5):
+		"""Data consist of list of list of trainging data
 		each row is an example"""
-		len_of_input = len(input)
-		def grad(self, theta_vector, *args):
+		len_of_input = len(data)
+		def grad(theta_vector):
 			if self.activation_func == 'sigmoid':
-				activation = getattr(nd,'sigmoid')
+				activation_prime = getattr(nd,'sigmoid_prime')
 			elif self.activation_func == 'tanh':
-				activation = getattr(nd, 'tanh')
+				activation_prime = getattr(nd, 'tanh_prime')
 
 			list_of_theta_mat = self.unroll_vector(theta_vector)
 			self.change_network_theta(list_of_theta_mat)
@@ -105,19 +105,23 @@ class neural_network(object):
 			delta = np.array(delta)
 
 			error_matrix = [0]*(self.num_layers)
-			for input_array in input:
+			for index,input_array in enumerate(data):
 				activation_matrix = self.forward_propogation(input_array)
-				error_matrix[self.num_layers-1] = np.array(activation_matrix[-1]) - np.array(target)
-				for i in range(self.num_layers-2,0,-1):
-					error_matrix[i] = np.dot(np.array(list_of_theta_mat[i]).T,error_matrix[i+1])*\
-					activation(list_of_theta_mat[i],activation_matrix[i])*(1-activation(list_of_theta_mat[i],activation_matrix[i]))
-
+				error_matrix[self.num_layers-1] = np.array(activation_matrix[-1]) - np.array(target[index])
+				error_matrix[self.num_layers-2] = np.dot(np.array(list_of_theta_mat[self.num_layers-2]).T,error_matrix[self.num_layers-2+1])[1:]*activation_prime(list_of_theta_mat[self.num_layers-2],activation_matrix[self.num_layers-2])
+				print('sjfs',error_matrix[self.num_layers-2])
+				print(activation_prime(list_of_theta_mat[self.num_layers-2],activation_matrix[self.num_layers-2]))
+				for i in range(self.num_layers-3,0,-1):
+					print('matrix \n',np.array(list_of_theta_mat[i]).T)
+					print('\nerror_matrix[i+1]\n', error_matrix[i+1])
+					error_matrix[i] = np.dot(np.array(list_of_theta_mat[i]).T,error_matrix[i+1][1:])*activation_prime(list_of_theta_mat[i],activation_matrix[i])
+					print('\n error', error_matrix[i]	)
 					delta[i] = delta[i] + np.matrix(error_matrix[i+1]).T*np.matrix(activation_matrix[i])
 			#Delta = delta+regularization*np.array(list_of_theta_mat)
 			for ind, del_mat in enumerate(Delta):
 				Delta[ind][1:] = delta[1:] + regularization*np.array(list_of_theta_mat)[ind][1:]
 			return roll_mat(Delta)
-
+		return grad
 
 
 

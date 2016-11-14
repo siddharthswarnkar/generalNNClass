@@ -9,6 +9,12 @@ def tanh(theta, x):
 	t = np.dot(np.array(theta), np.array(x))
 	return (np.exp(t) - np.exp(-t))/(np.exp(t) + np.exp(-t)) 
 
+def sigmoid_prime(theta,x):
+	ans = sigmoid(theta,x)
+	return ans*(1-ans)
+
+def tanh_prime(theta,x):
+	return 1-tanh(theta,x)**2
 #def softmax(theta, x):
 
 
