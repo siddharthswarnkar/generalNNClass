@@ -1,15 +1,19 @@
 import numpy as np
-import math
 import random 
 
 def sigmoid(theta, x):
-	return 1/(1 + math.exp(-np.dot(np.array(theta), np.array(x))))
+	return 1/(1 + np.exp(-np.dot(np.array(theta), np.array(x))))
+
+def sigmoid_prime(theta,x):
+	ans = sigmoid(theta,x)
+	return ans*(1-ans)
 
 def tanh(theta, x):
 	t = np.dot(np.array(theta), np.array(x))
-	return (math.exp(t) - math.exp(-t))/(math.exp(t) + math.exp(-t)) 
+	return (np.exp(t) - np.exp(-t))/(np.exp(t) + np.exp(-t)) 
 
-#def softmax(theta, x):
+def tanh_prime(theta,x):
+	return 1-tanh(theta,x)**2
 
 
 class DotProductError(Exception):
@@ -59,4 +63,4 @@ class node(object):
 				
 
 if __name__ == '__main__':
-	pass			
+	pass
