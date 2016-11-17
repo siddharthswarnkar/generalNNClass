@@ -110,11 +110,6 @@ class neural_network(object):
 		num_output_vec = self.list_of_layers[-1]
 
 		def cost(theta):
-			if self.activation_func == 'sigmoid':
-				activation_func = getattr(nd,'sigmoid')
-			elif self.activation_func == 'tanh':
-				activation_func = getattr(nd, 'tanh')
-
 			list_of_theta_mat = self.unroll_vector(theta)
 			self.change_network_theta(list_of_theta_mat)
 
@@ -126,23 +121,23 @@ class neural_network(object):
 
 			for theta_mat in list_of_theta_mat:
 				for elem_list in theta_mat:
-					for elem in elem_list:
+					for elem in elem_list[1:]:
 						result += (lambd/(2*num_data))*elem**2 
 			return result
 		return cost
 
-	def back_propogation(self, data, target, regularization=0.5):
-		"""Data consist of list of list of trainging data
-		each row is an example"""
-		len_of_input = len(data)
-		def grad(theta_vector):
+	def back_propogation(self, data, target, lambd=0.5):
+		num_data = len(data)
+
+		def grad_cost(theta):
 			if self.activation_func == 'sigmoid':
 				activation_prime = getattr(nd,'sigmoid_prime')
 			elif self.activation_func == 'tanh':
 				activation_prime = getattr(nd, 'tanh_prime')
 
-			list_of_theta_mat = self.unroll_vector(theta_vector)
+			list_of_theta_mat = self.unroll_vector(theta)
 			self.change_network_theta(list_of_theta_mat)
+
 			delta = []
 			Delta = []
 			for matrix in list_of_theta_mat:
@@ -153,20 +148,36 @@ class neural_network(object):
 			delta = np.array(delta)
 
 			error_matrix = [0]*(self.num_layers)
-			for index,input_array in enumerate(data):
-				activation_matrix = self.forward_propogation(input_array)
-				error_matrix[self.num_layers-1] = np.array(activation_matrix[-1]) - np.array(target[index])
-				error_matrix[self.num_layers-2] = np.dot(np.array(list_of_theta_mat[self.num_layers-2]).T,error_matrix[self.num_layers-2+1])[1:]*activation_prime(list_of_theta_mat[self.num_layers-2],activation_matrix[self.num_layers-2])
-				print('sjfs',error_matrix[self.num_layers-2])
-				print(activation_prime(list_of_theta_mat[self.num_layers-2],activation_matrix[self.num_layers-2]))
-				for i in range(self.num_layers-3,0,-1):
-					print('matrix \n',np.array(list_of_theta_mat[i]).T)
-					print('\nerror_matrix[i+1]\n', error_matrix[i+1])
-					error_matrix[i] = np.dot(np.array(list_of_theta_mat[i]).T,error_matrix[i+1][1:])*activation_prime(list_of_theta_mat[i],activation_matrix[i])
-					print('\n error', error_matrix[i]	)
-					delta[i] = delta[i] + np.matrix(error_matrix[i+1]).T*np.matrix(activation_matrix[i])
-			#Delta = delta+regularization*np.array(list_of_theta_mat)
-			for ind, del_mat in enumerate(Delta):
-				Delta[ind][1:] = delta[1:] + regularization*np.array(list_of_theta_mat)[ind][1:]
-			return roll_mat(Delta)
-		return grad
+			for i in range(num_data):
+				activation_matrix = self.forward_propogation(data[i])
+
+				temp_index = self.num_layers - 1
+				error_matrix[temp_index] = np.array(activation_matrix[-1]) - np.array(target[i])
+				delta[temp_index-1] = delta[temp_index-1] + np.matrix(error_matrix[temp_index]).T*np.matrix(activation_matrix[temp_index-1])
+				
+				temp_index = self.num_layers - 2
+				error_matrix[temp_index] = np.dot(np.array(list_of_theta_mat[temp_index]).T[1:], error_matrix[temp_index+1]) \
+											*activation_prime(list_of_theta_mat[temp_index-1], activation_matrix[temp_index-1])
+				delta[temp_index-1] = delta[temp_index-1] + np.matrix(error_matrix[temp_index]).T*np.matrix(activation_matrix[temp_index-1])
+
+				for j in range(self.num_layers-3, 0,-1):
+					error_matrix[j] = np.dot(np.array(list_of_theta_mat[j]).T[1:], error_matrix[j+1]) \
+										*activation_prime(list_of_theta_mat[j-1], activation_matrix[j-1])
+					delta[j-1] = delta[j-1] + np.matrix(error_matrix[j]).T*np.matrix(activation_matrix[j-1])					
+
+			for layer in range(self.num_layers - 1):
+				row, col = np.matrix(Delta[layer]).shape
+				for ind_x in range(row):
+					for ind_y in range(col):
+						Delta[layer][ind_x, ind_y] = (1/num_data)*delta[layer][ind_x, ind_y] + lambd*list_of_theta_mat[layer][ind_x][ind_y]
+						if ind_y == 0:
+							Delta[layer][ind_x, ind_y] = (1/num_data)*delta[layer][ind_x, ind_y]
+					
+			return self.roll_mat(Delta)	
+		return grad_cost
+		
+
+
+
+
+
