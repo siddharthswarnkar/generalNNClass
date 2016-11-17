@@ -21,7 +21,7 @@ class DotProductError(Exception):
 
 class node(object):
 	def __init__(self, n=0, activation_func='sigmoid', bias=False, inpt=False):
-		self.theta = [random.uniform(-1,1) for i in range(n)]
+		self.theta = [random.uniform(-0.5,0.5) for i in range(n)]
 		self.activation_func = activation_func
 		self.bias = False
 		self.inpt = False
