@@ -1,5 +1,5 @@
-from conjugate_gradient import conjugate_gradient as cg
-from grad_descent import grad_descent as gd
+import conjugate_gradient as cg
+import grad_descent as gd
 import helper as hlp
 import numpy as np
 import node as nd
@@ -73,7 +73,6 @@ class neural_network(object):
 	        theta_mat = []
 	        size = list_of_layers[i]*(list_of_layers[i-1]+1)
 	        theta_rolled = theta_vector[start:start+size]
-	        #print(i,' ',start,' ',size, " ", theta_rolled)
 	        for row in range(list_of_layers[i]):
 	            temp = []
 	            for col in range(list_of_layers[i-1]+1):
@@ -82,19 +81,67 @@ class neural_network(object):
 	        list_of_theta_mat.append(theta_mat)
 	        start += size
 	    return list_of_theta_mat
+	
+	def predict(self, x, give_confidence=False):
+		prev_layer_output = [self.nodes[0][0].compute_output()]
+		for i in range(1,self.list_of_layers[0]+1):
+			prev_layer_output.append(self.nodes[0][i].compute_output(x[i-1]))
+	
+		for i in range(1,self.num_layers):
+			prev_layer_output = self.layer_output(i, prev_layer_output)
+
+		if not give_confidence:
+			max_pos = 0
+			for i in range(self.list_of_layers[-1]):
+				if prev_layer_output[max_pos] < prev_layer_output[i]:
+					max_pos = i
+			res = []
+			for i in range(self.list_of_layers[-1]):
+				if max_pos != i:
+					res.append(0)
+				else:
+					res.append(1)	
+			return res
+		
+		return prev_layer_output
+
+	def compute_cost(self, data, target, lambd=0.5):
+		num_data = len(data)
+		num_output_vec = self.list_of_layers[-1]
+
+		def cost(theta):
+			list_of_theta_mat = self.unroll_vector(theta)
+			self.change_network_theta(list_of_theta_mat)
+
+			result = 0
+			for i in range(num_data):
+				output = self.predict(data[i], give_confidence=True)
+				for j in range(self.list_of_layers[-1]):
+					result += (-1/num_data)*(target[i][j]*math.log(output[j]) + (1-target[i][j])*math.log(1-output[j]))
+
+			for theta_mat in list_of_theta_mat:
+				for elem_list in theta_mat:
+					for elem in elem_list[1:]:
+						result += (lambd/(2*num_data))*elem**2 
+			return result
+		return cost
+
+	def back_propogation(self, data, target, lambd=0.5):
+		num_data = len(data)
 
 	def back_propogation(self, data, target, regularization=0.5):
 		"""Data consist of list of list of trainging data
 		each row is an example"""
 		len_of_input = len(data)
-		def grad(theta_vector):
+		def grad_cost(theta):
 			if self.activation_func == 'sigmoid':
 				activation_prime = getattr(nd,'sigmoid_prime')
 			elif self.activation_func == 'tanh':
 				activation_prime = getattr(nd, 'tanh_prime')
 
-			list_of_theta_mat = self.unroll_vector(theta_vector)
+			list_of_theta_mat = self.unroll_vector(theta)
 			self.change_network_theta(list_of_theta_mat)
+
 			delta = []
 			Delta = []
 			for matrix in list_of_theta_mat:
@@ -105,23 +152,73 @@ class neural_network(object):
 			delta = np.array(delta)
 
 			error_matrix = [0]*(self.num_layers)
-			for index,input_array in enumerate(data):
-				activation_matrix = self.forward_propogation(input_array)
-				error_matrix[self.num_layers-1] = np.array(activation_matrix[-1]) - np.array(target[index])
-				error_matrix[self.num_layers-2] = np.dot(np.array(list_of_theta_mat[self.num_layers-2]).T,error_matrix[self.num_layers-2+1])[1:]*activation_prime(list_of_theta_mat[self.num_layers-2],activation_matrix[self.num_layers-2])
-				print('sjfs',error_matrix[self.num_layers-2])
-				print(activation_prime(list_of_theta_mat[self.num_layers-2],activation_matrix[self.num_layers-2]))
-				for i in range(self.num_layers-3,0,-1):
-					print('matrix \n',np.array(list_of_theta_mat[i]).T)
-					print('\nerror_matrix[i+1]\n', error_matrix[i+1])
-					error_matrix[i] = np.dot(np.array(list_of_theta_mat[i]).T,error_matrix[i+1][1:])*activation_prime(list_of_theta_mat[i],activation_matrix[i])
-					print('\n error', error_matrix[i]	)
-					delta[i] = delta[i] + np.matrix(error_matrix[i+1]).T*np.matrix(activation_matrix[i])
-			#Delta = delta+regularization*np.array(list_of_theta_mat)
-			for ind, del_mat in enumerate(Delta):
-				Delta[ind][1:] = delta[1:] + regularization*np.array(list_of_theta_mat)[ind][1:]
-			return roll_mat(Delta)
-		return grad
 
+			for i in range(num_data):
+				activation_matrix = self.forward_propogation(data[i])
 
+				temp_index = self.num_layers - 1
+				error_matrix[temp_index] = np.array(activation_matrix[-1]) - np.array(target[i])
+				delta[temp_index-1] = delta[temp_index-1] + np.matrix(error_matrix[temp_index]).T*np.matrix(activation_matrix[temp_index-1])
+				
+				temp_index = self.num_layers - 2
+				error_matrix[temp_index] = np.dot(np.array(list_of_theta_mat[temp_index]).T[1:], error_matrix[temp_index+1]) \
+											*activation_prime(list_of_theta_mat[temp_index-1], activation_matrix[temp_index-1])
+				delta[temp_index-1] = delta[temp_index-1] + np.matrix(error_matrix[temp_index]).T*np.matrix(activation_matrix[temp_index-1])
 
+				for j in range(self.num_layers-3, 0,-1):
+					error_matrix[j] = np.dot(np.array(list_of_theta_mat[j]).T[1:], error_matrix[j+1]) \
+										*activation_prime(list_of_theta_mat[j-1], activation_matrix[j-1])
+					delta[j-1] = delta[j-1] + np.matrix(error_matrix[j]).T*np.matrix(activation_matrix[j-1])					
+
+			for layer in range(self.num_layers - 1):
+				row, col = np.matrix(Delta[layer]).shape
+				for ind_x in range(row):
+					for ind_y in range(col):
+						Delta[layer][ind_x, ind_y] = (1/num_data)*delta[layer][ind_x, ind_y] + lambd*list_of_theta_mat[layer][ind_x][ind_y]
+						if ind_y == 0:
+							Delta[layer][ind_x, ind_y] = (1/num_data)*delta[layer][ind_x, ind_y]
+					
+			return self.roll_mat(Delta)	
+		return grad_cost
+		
+	def train(self, data, target, optim_func='gradient_descent', k=5, lambd=0.5):
+		if optim_func == 'gradient_descent':
+			optimize = getattr(gd, 'grad_descent')
+		elif optim_func == 'conjugate_gradient':
+			optimize = getattr(cg, 'conjugate_gradient')			
+
+		num_data = len(data)	
+		accuracy = 0
+		max_accuracy = 0
+		for iter_num in range(k):
+			cv_set = []
+			train_set = []
+			target_cv = []
+			target_train = []
+			for i in range(num_data):
+				if i%k == iter_num:
+					cv_set.append(data[i])
+					target_cv.append(target[i])
+				else:
+					train_set.append(data[i])
+					target_train.append(target[i])
+
+			cost = self.compute_cost(train_set, target_train, lambd)
+			grad_cost = self.back_propogation(train_set, target_train, lambd)
+
+			theta_0 = self.roll_mat([self.construct_theta_mat(j) for j in range(1,self.num_layers)])
+			
+			theta = optimize(cost, x0=theta_0, period=100, norm_lim=0.0001)
+
+			positive = 0
+			num_examples = len(cv_set)
+			for j in range(num_examples):
+				output = self.predict(cv_set[j])
+				if output == target_cv[j]:
+					positive += 1
+			accuracy = positive/num_examples
+
+			if accuracy > max_accuracy :
+				theta_optimal = theta
+			print('Accuracy :', accuracy)	
+		self.change_network_theta(self.unroll_vector(theta_optimal))
