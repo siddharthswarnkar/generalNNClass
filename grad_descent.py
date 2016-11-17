@@ -5,7 +5,8 @@ import helper as hlp
 def grad_descent(func, x0, args=(), fprime=None, alpha=0.02, adaptive=False,\
 				beta=0.8, numIter=1e5, norm_lim=1e-6, epsilon=1e-10, order=2,\
 				disp=True, period=10000):
-	'''Gradient descent algorithm to optimize the cost function :
+	'''
+	Gradient descent algorithm to optimize the cost function :
 		func = function to be optimized
 		x0   = initial guess
 		args = other arguments to be passed to func

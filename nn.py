@@ -1,5 +1,5 @@
-from conjugate_gradient import conjugate_gradient as cg
-from grad_descent import grad_descent as gd
+import conjugate_gradient as cg
+import grad_descent as gd
 import helper as hlp
 import numpy as np
 import node as nd
@@ -117,7 +117,7 @@ class neural_network(object):
 			for i in range(num_data):
 				output = self.predict(data[i], give_confidence=True)
 				for j in range(self.list_of_layers[-1]):
-					result += (-1/num_data)*(target[i][j]*math.log(output[j]) + (1-target[i][j])*math.log(1-output[j]) )
+					result += (-1/num_data)*(target[i][j]*math.log(output[j]) + (1-target[i][j])*math.log(1-output[j]))
 
 			for theta_mat in list_of_theta_mat:
 				for elem_list in theta_mat:
@@ -176,8 +176,44 @@ class neural_network(object):
 			return self.roll_mat(Delta)	
 		return grad_cost
 		
+	def train(self, data, target, optim_func='gradient_descent', k=5, lambd=0.5):
+		if optim_func == 'gradient_descent':
+			optimize = getattr(gd, 'grad_descent')
+		elif optim_func == 'conjugate_gradient':
+			optimize = getattr(cg, 'conjugate_gradient')			
 
+		num_data = len(data)	
+		accuracy = 0
+		max_accuracy = 0
+		for iter_num in range(k):
+			cv_set = []
+			train_set = []
+			target_cv = []
+			target_train = []
+			for i in range(num_data):
+				if i%k == iter_num:
+					cv_set.append(data[i])
+					target_cv.append(target[i])
+				else:
+					train_set.append(data[i])
+					target_train.append(target[i])
 
+			cost = self.compute_cost(train_set, target_train, lambd)
+			grad_cost = self.back_propogation(train_set, target_train, lambd)
 
+			theta_0 = self.roll_mat([self.construct_theta_mat(j) for j in range(1,self.num_layers)])
 
+			theta = optimize(cost, x0=theta_0, period=100, norm_lim=0.0001)
 
+			positive = 0
+			num_examples = len(cv_set)
+			for j in range(num_examples):
+				output = self.predict(cv_set[j])
+				if output == target_cv[j]:
+					positive += 1
+			accuracy = positive/num_examples
+
+			if accuracy > max_accuracy :
+				theta_optimal = theta
+			print('Accuracy :', accuracy)	
+		self.change_network_theta(self.unroll_vector(theta_optimal))
