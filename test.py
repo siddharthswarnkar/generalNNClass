@@ -65,8 +65,6 @@ class TestNeuralNet(unittest.TestCase):
 		cost = cost_func(vec)
 		self.assertAlmostEqual(cost, 91, delta=1)
 
-
-'''
 ###################### node.py ######################
 
 class TestActivation(unittest.TestCase):
@@ -211,6 +209,6 @@ class TestHelpers(unittest.TestCase):
 		self.assertAlmostEqual(hlp.vecnorm(vector),np.sqrt(55))
 		self.assertEqual(hlp.vecnorm(vector,order=np.Inf),5)
 		self.assertEqual(hlp.vecnorm(vector,order=-np.Inf),1)
-'''
+
 if __name__ == '__main__':
 	pass
