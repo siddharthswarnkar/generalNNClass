@@ -109,30 +109,44 @@ class neural_network(object):
 		num_data = len(data)
 		num_output_vec = self.list_of_layers[-1]
 
-		def cost(theta):
-			list_of_theta_mat = self.unroll_vector(theta)
-			self.change_network_theta(list_of_theta_mat)
+		if self.activation_func == 'sigmoid':
+			def cost(theta):
+				list_of_theta_mat = self.unroll_vector(theta)
+				self.change_network_theta(list_of_theta_mat)
 
-			result = 0
-			for i in range(num_data):
-				output = self.predict(data[i], give_confidence=True)
-				for j in range(self.list_of_layers[-1]):
-					result += (-1/num_data)*(target[i][j]*math.log(output[j]) + (1-target[i][j])*math.log(1-output[j]))
+				result = 0
+				for i in range(num_data):
+					output = self.predict(data[i], give_confidence=True)
+					for j in range(self.list_of_layers[-1]):
+						result += (-1/num_data)*(target[i][j]*np.log(output[j]) + (1-target[i][j])*np.log(1-output[j]))
 
-			for theta_mat in list_of_theta_mat:
-				for elem_list in theta_mat:
-					for elem in elem_list[1:]:
-						result += (lambd/(2*num_data))*elem**2 
-			return result
-		return cost
+				for theta_mat in list_of_theta_mat:
+					for elem_list in theta_mat:
+						for elem in elem_list[1:]:
+							result += (lambd/(2*num_data))*elem**2 
+				return result
+			
+		elif self.activation_func == 'tanh' :
+			def cost(theta):
+				list_of_theta_mat = self.unroll_vector(theta)
+				self.change_network_theta(list_of_theta_mat)
+
+				result = 0
+				for i in range(num_data):
+					output = self.predict(data[i], give_confidence=True)
+					for j in range(self.list_of_layers[-1]):
+						result += (-1/num_data)*( (target[i][j]+1)*0.5 * math.log( (output[j]+1)*0.5 ) + ( 1 - (target[i][j]+1)*0.5 ) * math.log(1- (output[j]+1)*0.5) )
+
+				for theta_mat in list_of_theta_mat:
+					for elem_list in theta_mat:
+						for elem in elem_list[1:]:
+							result += (lambd/(2*num_data))*elem**2 
+				return result
+		return cost	
 
 	def back_propogation(self, data, target, lambd=0.5):
 		num_data = len(data)
 
-	def back_propogation(self, data, target, regularization=0.5):
-		"""Data consist of list of list of trainging data
-		each row is an example"""
-		len_of_input = len(data)
 		def grad_cost(theta):
 			if self.activation_func == 'sigmoid':
 				activation_prime = getattr(nd,'sigmoid_prime')
@@ -152,7 +166,6 @@ class neural_network(object):
 			delta = np.array(delta)
 
 			error_matrix = [0]*(self.num_layers)
-
 			for i in range(num_data):
 				activation_matrix = self.forward_propogation(data[i])
 
@@ -174,7 +187,7 @@ class neural_network(object):
 				row, col = np.matrix(Delta[layer]).shape
 				for ind_x in range(row):
 					for ind_y in range(col):
-						Delta[layer][ind_x, ind_y] = (1/num_data)*delta[layer][ind_x, ind_y] + lambd*list_of_theta_mat[layer][ind_x][ind_y]
+						Delta[layer][ind_x, ind_y] = (1/num_data)*(delta[layer][ind_x, ind_y] + lambd*list_of_theta_mat[layer][ind_x][ind_y])
 						if ind_y == 0:
 							Delta[layer][ind_x, ind_y] = (1/num_data)*delta[layer][ind_x, ind_y]
 					
@@ -207,8 +220,8 @@ class neural_network(object):
 			grad_cost = self.back_propogation(train_set, target_train, lambd)
 
 			theta_0 = self.roll_mat([self.construct_theta_mat(j) for j in range(1,self.num_layers)])
-			
-			theta = optimize(cost, x0=theta_0, period=100, norm_lim=0.0001)
+
+			theta = optimize(cost, x0=theta_0, period=500, norm_lim=0.001, alpha=0.03)
 
 			positive = 0
 			num_examples = len(cv_set)

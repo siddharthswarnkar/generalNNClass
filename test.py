@@ -1,6 +1,8 @@
 from __future__ import division
 from conjugate_gradient import conjugate_gradient as CG
-from hypothesis import given, strategies
+from hypothesis import given
+import nn
+from hypothesis import strategies as st
 import helper as hlp
 import grad_descent
 import numpy as np
@@ -40,24 +42,85 @@ def grad_of_some_complex_func(list_of_variable):
 	grad_y = 2*(y-2) + 2*y*(x**2) + 2*(y-3)*((x-1)**2)
 	return np.array([grad_x, grad_y])
 
+###################### neural net ###################
 
+class TestNeuralNet(unittest.TestCase):
+
+	def test_neural_net(self):
+		obj = nn.neural_network([2,3,2])
+		data = [[1,1], [2,2], [3,3], [4,4], [5,5], [6,6]]
+		target = [[1,0], [1,0], [1,0], [0,1], [0,1], [0,1]]
+
+		matrix = [[[1,2,3], [4,5,6], [7,8,9]], [[10,11,12,13], [14,15,16,17]]]
+		ans = np.array([0.006, 0.1, 0.2, 8.1e-07, 0.4, 0.5, 1.0e-10, 0.6, 0.7, 0.5, 1.4, 1.5, 1.5, 0.5, 1.7, 1.8, 1.9])
+		fprime = obj.back_propogation(data,target)
+		vec = obj.roll_mat(matrix)
+		cal = np.array(fprime(vec))
+		self.assertAlmostEqual(cal.all(), ans.all(), delta=1)
+		self.assertEqual(np.array(obj.unroll_vector(vec)).all(), np.array(matrix).all())
+		matrix = [[[1,2,3], [4,5,6], [7,8,9]], [[1,1,1,1], [4,5,6,7]]]
+		vec = obj.roll_mat(matrix)
+		obj.change_network_theta(matrix)
+		cost_func = obj.compute_cost(data, target)
+		cost = cost_func(vec)
+		self.assertAlmostEqual(cost, 91, delta=1)
+
+
+'''
 ###################### node.py ######################
 
 class TestActivation(unittest.TestCase):
 	
-	# testing sigmoid
+	# testing sigmoid, sigmoid_prime
 	def test_sigmoid(self):
 		theta = np.array([1, 2, 3, 4, 5])
 		x = np.array([.5, .6, .7, .8, .9])
 		self.assertAlmostEqual(nd.sigmoid(theta, x), 0.9999898700090192, places = 10)
 		self.assertAlmostEqual(nd.sigmoid(-theta, x), 1.0129990980873921e-05, places = 10)
+
+	def test_sigmoid_prime(self):
+		theta = np.array([1, 2, 3, 4, 5])
+		x = np.array([.5, .6, .7, .8, .9])
+		sgd = nd.sigmoid(theta, x)
+		sgd_theoritical = sgd*(1-sgd)
+		self.assertAlmostEqual(sgd_theoritical.all(), nd.sigmoid_prime(theta, x).all())
 	
-	# testing tanh
+	# testing tanh, tanh_prime
 	def test_tanh(self):
 		theta = np.array([1, 2, 3, 4, 5])
 		x = np.array([.5, .6, .7, .8, .9])
 		self.assertAlmostEqual(nd.tanh(theta, x), 0.9999999997947623, places = 10)	
 		self.assertAlmostEqual(nd.tanh(-theta, x), -0.9999999997947623, places = 10)
+
+	def test_tanh_prime(self):
+		theta = np.array([1, 2, 3, 4, 5])
+		x = np.array([.5, .6, .7, .8, .9])
+		tanhval = nd.tanh(theta, x)
+		tanh_theoritical = tanhval*(1-tanhval)
+		self.assertAlmostEqual(tanh_theoritical.all(), nd.tanh_prime(theta, x).all())
+
+	def test_node(self):
+		obj1 = nd.node(5)
+		theta = np.array(obj1.get_theta())
+		self.assertAlmostEqual(theta.all(), np.array([1, 1, 1, 1, 1]).all(), delta=1)
+		obj1.change_theta([1,2,3,4,5])
+		theta = np.array(obj1.get_theta())
+		self.assertEqual(theta.all(), np.array([1,2,3,4,5]).all())
+		x = np.array([.5, .6, .7, .8, .9])
+		self.assertAlmostEqual(obj1.compute_output(x), nd.sigmoid(theta, x))
+
+		obj2 = nd.node(5, activation_func='tanh')
+		theta = np.array(obj1.get_theta())
+		self.assertAlmostEqual(theta.all(), np.array([1, 1, 1, 1, 1]).all(), delta=1)
+		obj1.change_theta([1,2,3,4,5])
+		theta = np.array(obj1.get_theta())
+		self.assertEqual(theta.all(), np.array([1,2,3,4,5]).all())
+		x = np.array([.5, .6, .7, .8, .9])
+		self.assertAlmostEqual(obj1.compute_output(x), nd.tanh(theta, x), delta=0.01)
+
+		obj3 = nd.node(inpt=True)
+		self.assertEqual(obj3.compute_output(x).all(), x.all())
+
 
 ###################### grad_descent.py and conjugate_gradient.py ######################
 
@@ -148,6 +211,6 @@ class TestHelpers(unittest.TestCase):
 		self.assertAlmostEqual(hlp.vecnorm(vector),np.sqrt(55))
 		self.assertEqual(hlp.vecnorm(vector,order=np.Inf),5)
 		self.assertEqual(hlp.vecnorm(vector,order=-np.Inf),1)
-
+'''
 if __name__ == '__main__':
 	pass

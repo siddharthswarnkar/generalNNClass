@@ -3,30 +3,18 @@ import random
 
 def sigmoid(theta, x):
 	return 1/(1 + np.exp(-np.dot(np.array(theta), np.array(x))))
-<<<<<<< HEAD
-=======
 
 def sigmoid_prime(theta,x):
 	ans = sigmoid(theta,x)
 	return ans*(1-ans)
->>>>>>> 247a0be3c135e9de835e43fde013db9a5dc92f89
 
 def tanh(theta, x):
 	t = np.dot(np.array(theta), np.array(x))
 	return (np.exp(t) - np.exp(-t))/(np.exp(t) + np.exp(-t)) 
 
-<<<<<<< HEAD
-def sigmoid_prime(theta,x):
-	ans = sigmoid(theta,x)
-	return ans*(1-ans)
+def tanh_prime(theta,x):
+	return 1-tanh(theta,x)**2
 
-def tanh_prime(theta,x):
-	return 1-tanh(theta,x)**2
-#def softmax(theta, x):
-=======
-def tanh_prime(theta,x):
-	return 1-tanh(theta,x)**2
->>>>>>> 247a0be3c135e9de835e43fde013db9a5dc92f89
 
 
 class DotProductError(Exception):
