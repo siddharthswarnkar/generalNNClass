@@ -9,10 +9,15 @@ import math
 class neural_network(object):
 
 	def __init__(self, list_of_layers, activation_func='sigmoid'):
-		'''Inilialize neural network
-		Input:
-		list_of_layers: list of number of nodes in each layer starting with input to output layer
-		activation_fucn: sigmoid or tanh'''
+		"""
+		Inilialize neural network
+		
+		Input : 
+			list_of_layers : list 
+				list of number of nodes in each layer starting with input to output layer
+			activation_fucn : string
+				sigmoid or tanh
+		"""
 
 		num_layers = len(list_of_layers)
 		self.num_layers = num_layers
@@ -34,12 +39,16 @@ class neural_network(object):
 			self.nodes.append(temp)
 
 	def layer_output(self, layer_num, prev_layer_output):
-		'''Input:
-		layer_num: layer number of required output
-		prev_layer_output: output of the previous layer
+		"""
+		
+		Input :
+			layer_num : 
+				layer number of required output
+			prev_layer_output : 
+				output of the previous layer
 		Output:
-		Returns the output of the layer_num using activation(theta.T*x)
-		'''
+			Returns the output of the layer_num using activation(theta.T*x)
+		"""
 		res = []
 		if layer_num != self.num_layers - 1:
 			for i in range(self.list_of_layers[layer_num] + 1):
@@ -51,7 +60,7 @@ class neural_network(object):
 
  
 	def construct_theta_mat(self,layer_num):
-		'''Returns theta matrix of the given layer'''	
+		"""Returns theta matrix of the given layer"""	
 		theta_mat = []
 		if layer_num != self.num_layers-1:
 			for i in range(1,self.list_of_layers[layer_num]+1):
@@ -63,9 +72,14 @@ class neural_network(object):
  
 
 	def forward_propogation(self, x):
-		'''Performs forward propogation
-		Input: Data point
-		Return: returns probability vector'''
+		"""
+		Performs forward propogation
+		
+		Input : list
+			Data point
+		Return : list
+			returns probability vector
+		"""
 
 		mat = [[1] + x]
 		for i in range(1, self.num_layers):
@@ -74,8 +88,12 @@ class neural_network(object):
 		return mat
 
 	def change_network_theta(self, list_of_theta_mat):
-		'''Changes weights of all the nodes in the network
-		Input: List of theta matrix corresponding to network'''
+		"""
+		Changes weights of all the nodes in the network
+		
+		Input : list of lists
+			List of theta matrix corresponding to network
+		"""
 
 		for i, theta_mat in enumerate(list_of_theta_mat[:-1]):
 			for j, node in enumerate(self.nodes[i + 1][1:]):
@@ -84,9 +102,16 @@ class neural_network(object):
 				node.change_theta(list_of_theta_mat[-1][j])
 
 	def roll_mat(self, list_of_mat):
-		'''Rolls the list of theta matrix into one dimension array(vector)
-		Input: List of theta matrix of network
-		Return: vector of theta'''
+		"""
+		Rolls the list of theta matrix into one dimension array(vector)
+		
+		Input : 
+			list_of_mat : list
+				List of theta matrix of network
+		Return : list of list
+			vector of theta
+		"""
+		
 		vector = []
 		for mat in list_of_mat:
 			for row in mat:
@@ -95,11 +120,17 @@ class neural_network(object):
 		return vector
 
 	def unroll_vector(self, theta_vector):
-		'''Converts theta vector into list of theta matrix corresponding to
+		"""
+		Converts theta vector into list of theta matrix corresponding to
 		network.
-		Input: vector consisting of theta of all layers
-		Output: List of theta matrix like [theta_mat1, theat_mat2, ..]
-		'''
+		
+		Input : 
+			theta_vector : list
+				vector consisting of theta of all layers
+		Output : 
+			List of theta matrix like [theta_mat1, theat_mat2, ..]
+		"""
+		
 		list_of_theta_mat = []
 		start = 0
 		list_of_layers = self.list_of_layers
@@ -117,12 +148,18 @@ class neural_network(object):
 		return list_of_theta_mat
 	
 	def predict(self, x, give_confidence=False):
-		'''Predicts the value of network given new data
-		Input: 
-		Input vector i.e. feature vector
-		Output:
-		give_confidence: if True then Probability corresponding to each class
-						else: Gives a binary vector'''
+		"""
+		Predicts the value of network given new data
+		
+		Input : 
+			x : list
+				Input vector i.e. feature vector
+			give_confidence : bool
+				gives give confidence on each possible output
+		Return : list
+			if give_confidence is True then : Probability corresponding to each class
+			else : Gives a binary vector
+		"""
 
 		prev_layer_output = [self.nodes[0][0].compute_output()]
 		for i in range(1,self.list_of_layers[0]+1):
@@ -147,11 +184,20 @@ class neural_network(object):
 		return prev_layer_output
 
 	def compute_cost(self, data, target, lambd=0.5):
-		'''Cross Entropy Cost function for the network.
-		 Can be uede with sigmoid or tanh
-		 Input: Data and corresponding targets
-		 lambda: regularization factor
-		 Returns: Cost function which takes theta vector and gives cost value'''
+		"""
+		Cross Entropy Cost function for the network.
+		Can be used with sigmoid or tanh
+		
+		Input : 
+			data : data frame (list of lists) 
+				Data and corresponding targets
+			target : list of lists
+				target of respective data points in data
+			lambd : float
+				regularization factor
+		Return : float 
+			Cost function which takes theta vector and gives cost value
+		"""
 
 		num_data = len(data)
 		num_output_vec = self.list_of_layers[-1]
@@ -192,10 +238,19 @@ class neural_network(object):
 		return cost
 
 	def back_propogation(self, data, target, lambd=0.5):
-		'''Finds derivative of cost function
-		Input: data and corresponding targets
-		lambda: regularization factor
-		Returns: Gradient function which returns gradient at given theta vector'''
+		"""
+		Finds derivative of cost function
+		
+		Input : 
+			data : data frame (list of lists) 
+				data and corresponding targets
+			target : list of lists
+				target of respective data points in data
+			lambda : float
+				regularization factor
+		Return : list
+			Gradient function which returns gradient at given theta vector
+		"""
 
 		num_data = len(data)
 
@@ -247,11 +302,21 @@ class neural_network(object):
 		return grad_cost
 		
 	def train(self, data, target, optim_func='gradient_descent', k=5, lambd=0.5):
-		'''Trains the network for given data and target
-		Input: data and corresponding target
-		optim_func: Optimization function to train fucntion with.(gradient_descent, conjugate_gradient)
-		k: k-fold cross validation 
-		lambd: regularization factor'''
+		"""
+		Trains the network for given data and target
+		
+		Input : 
+			data : data frame (list of lists) 
+				data and corresponding targets
+			target : list of lists
+				target of respective data points in data
+			optim_func : string 
+				Optimization function to train fucntion with.(gradient_descent, conjugate_gradient)
+			k : int
+				k-fold cross validation 
+			lambd : float 
+				regularization factor
+		"""
 
 		if optim_func == 'gradient_descent':
 			optimize = getattr(gd, 'grad_descent')
