@@ -2,7 +2,7 @@ from __future__ import division
 from conjugate_gradient import conjugate_gradient as CG
 from hypothesis import given
 import nn
-from hypothesis import strategies as st
+from hypothesis import strategies
 import helper as hlp
 import grad_descent
 import numpy as np
@@ -47,23 +47,53 @@ def grad_of_some_complex_func(list_of_variable):
 class TestNeuralNet(unittest.TestCase):
 
 	def test_neural_net(self):
-		obj = nn.neural_network([2,3,2])
-		data = [[1,1], [2,2], [3,3], [4,4], [5,5], [6,6]]
-		target = [[1,0], [1,0], [1,0], [0,1], [0,1], [0,1]]
+		obj = nn.neural_network([2,3,2,4])
+		data = [[1,1], [2,2], [3,3], [4,4], [5,5], [6,6], [7,7], [8,8]]
+		target = [[1,0,0,0], [1,0,0,0], [0,1,0,0], [0,1,0,0], [0,0,1,0], [0,0,1,0], [0,0,0,1], [0,0,0,1]]
 
-		matrix = [[[1,2,3], [4,5,6], [7,8,9]], [[10,11,12,13], [14,15,16,17]]]
-		ans = np.array([0.006, 0.1, 0.2, 8.1e-07, 0.4, 0.5, 1.0e-10, 0.6, 0.7, 0.5, 1.4, 1.5, 1.5, 0.5, 1.7, 1.8, 1.9])
+		matrix = np.array([ [[.1,.2,.3],
+		                     [.4,.5,.6],
+		                     [.7,.8,.9]],
+		                   
+		                   [[.10,.11,.12,.13],
+		                    [.14,.15,.16,.17]],
+		                   
+		                   [[.18,.19,.20],
+		                    [.21,.22,.23],
+		                    [.24,.25,.26],
+		                    [.27,.28,.29]] ])
+
+		ans = np.array([ 0.002,  0.019,  0.025,  0.001,  0.033,  0.039,  0.   ,  0.05 ,
+				        0.057,  0.085,  0.08 ,  0.089,  0.092,  0.086,  0.083,  0.092,
+				        0.095,  0.355,  0.23 ,  0.243,  0.371,  0.239,  0.253,  0.386,
+				        0.25 ,  0.264,  0.402,  0.261,  0.275])
+
 		fprime = obj.back_propogation(data,target)
 		vec = obj.roll_mat(matrix)
 		cal = np.array(fprime(vec))
 		self.assertAlmostEqual(cal.all(), ans.all(), delta=1)
 		self.assertEqual(np.array(obj.unroll_vector(vec)).all(), np.array(matrix).all())
-		matrix = [[[1,2,3], [4,5,6], [7,8,9]], [[1,1,1,1], [4,5,6,7]]]
-		vec = obj.roll_mat(matrix)
 		obj.change_network_theta(matrix)
 		cost_func = obj.compute_cost(data, target)
 		cost = cost_func(vec)
-		self.assertAlmostEqual(cost, 91, delta=1)
+		self.assertAlmostEqual(cost, 27, delta=1)
+
+		obj = nn.neural_network([2,3,2,4], activation_func='tanh')
+
+		ans = np.array([ 0.007,  0.024,  0.03 ,  0.001,  0.033,  0.039,  0.   ,  0.05 ,
+				        0.056,  0.142,  0.132,  0.147,  0.149,  0.127,  0.121,  0.135,
+				        0.137,  0.102,  0.061,  0.075,  0.152,  0.076,  0.095,  0.2  ,
+				        0.097,  0.121,  0.246,  0.118,  0.148])
+
+		fprime = obj.back_propogation(data,target)
+		vec = obj.roll_mat(matrix)
+		cal = np.array(fprime(vec))
+		self.assertAlmostEqual(cal.all(), ans.all(), delta=1)
+		self.assertEqual(np.array(obj.unroll_vector(vec)).all(), np.array(matrix).all())
+		obj.change_network_theta(matrix)
+		cost_func = obj.compute_cost(data, target)
+		cost = cost_func(vec)
+		self.assertAlmostEqual(cost, 21, delta=1)
 
 ###################### node.py ######################
 

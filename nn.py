@@ -33,16 +33,6 @@ class neural_network(object):
 			res.append(self.nodes[layer_num][i].compute_output(prev_layer_output))
 		return res
 
-	def construct_theta_mat(self,layer_num):
-		theta_mat = []
-		if layer_num != self.num_layers-1:
-			for i in range(1,self.list_of_layers[layer_num]+1):
-				theta_mat.append(self.nodes[layer_num][i].get_theta())
-			return theta_mat
-		for i in range(self.list_of_layers[layer_num]):
-			theta_mat.append(self.nodes[layer_num][i].get_theta())
-		return theta_mat
-
 	def forward_propogation(self, x):
 		mat = [[1]+x]	
 		for i in range(1,self.num_layers):
