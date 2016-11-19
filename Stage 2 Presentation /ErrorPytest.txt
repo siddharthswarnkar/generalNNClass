@@ -1,0 +1,20 @@
+nose.config: INFO: Ignoring files matching ['^\\.', '^_', '^setup\\.py$']
+test_node (test.TestActivation) ... ok
+test_sigmoid (test.TestActivation) ... ok
+test_sigmoid_prime (test.TestActivation) ... ok
+test_tanh (test.TestActivation) ... ok
+test_tanh_prime (test.TestActivation) ... ok
+test_compute_numerical_grad (test.TestHelpers) ... ok
+test_vecnorm (test.TestHelpers) ... ok
+test_neural_net (test.TestNeuralNet) ... ok
+test_least_square_cost_with_conjugate (test.TestOptimization) ... ok
+test_least_square_cost_with_grad_descent (test.TestOptimization) ... ok
+test_simple_func_with_conjugate (test.TestOptimization) ... ok
+test_simple_with_grad_descent (test.TestOptimization) ... ok
+test_some_complex_func_with_conjugate (test.TestOptimization) ... ok
+test_some_complex_func_with_grad_descent (test.TestOptimization) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 264.607s
+
+OK
