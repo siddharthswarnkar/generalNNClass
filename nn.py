@@ -5,34 +5,39 @@ import numpy as np
 import node as nd
 import math
 
+
 class neural_network(object):
+
 	def __init__(self, list_of_layers, activation_func='sigmoid'):
 		num_layers = len(list_of_layers)
 		self.num_layers = num_layers
 		self.list_of_layers = list_of_layers
 		self.activation_func = activation_func
-		
+
 		self.nodes = []
 		for i in range(num_layers):
 			if i == 0:
-				temp = [nd.node(bias=True)] + [nd.node(inpt=True) for j in range(list_of_layers[i])]
-			elif i != num_layers-1:
-				temp = [nd.node(bias=True)] + [nd.node(list_of_layers[i-1]+1, activation_func) for j in range(list_of_layers[i])]
+				temp = [nd.node(bias=True)] + [nd.node(inpt=True)
+				                for j in range(list_of_layers[i])]
+			elif i != num_layers - 1:
+				temp = [nd.node(bias=True)] + [nd.node(list_of_layers[i - 1] + 1,
+				                activation_func) for j in range(list_of_layers[i])]
 			else:
-				temp = [nd.node(list_of_layers[i-1]+1, activation_func) for j in range(list_of_layers[i])]			
+				temp = [nd.node(list_of_layers[i - 1] + 1, activation_func)
+				                for j in range(list_of_layers[i])]
 
-			self.nodes.append(temp)	
+			self.nodes.append(temp)
 
 	def layer_output(self, layer_num, prev_layer_output):
-		'''Input: 
+		'''Input:
 		layer_num: layer number of required output
 		prev_layer_output: output of the previous layer
 		Output:
 		Returns the output of the layer_num using activation(theta.T*x)
 		'''
 		res = []
-		if layer_num != self.num_layers-1:
-			for i in range(self.list_of_layers[layer_num]+1):
+		if layer_num != self.num_layers - 1:
+			for i in range(self.list_of_layers[layer_num] + 1):
 				res.append(self.nodes[layer_num][i].compute_output(prev_layer_output))
 			return res
 		for i in range(self.list_of_layers[layer_num]):
@@ -44,9 +49,9 @@ class neural_network(object):
 		Input: Data point
 		Return: returns probability vector'''
 
-		mat = [[1]+x]	
-		for i in range(1,self.num_layers):
-			list_of_input = self.layer_output(i,mat[-1])
+		mat = [[1] + x]
+		for i in range(1, self.num_layers):
+			list_of_input = self.layer_output(i, mat[-1])
 			mat.append(list_of_input)
 		return mat
 
@@ -54,13 +59,13 @@ class neural_network(object):
 		'''Changes weights of all the nodes in the network
 		Input: List of theta matrix corresponding to network'''
 
-		for i,theta_mat in enumerate(list_of_theta_mat[:-1]):
-			for j,node in enumerate(self.nodes[i+1][1:]):
+		for i, theta_mat in enumerate(list_of_theta_mat[:-1]):
+			for j, node in enumerate(self.nodes[i + 1][1:]):
 				node.change_theta(theta_mat[j])
-		for j,node in enumerate(self.nodes[-1]):
+		for j, node in enumerate(self.nodes[-1]):
 				node.change_theta(list_of_theta_mat[-1][j])
 
-	def roll_mat(self,list_of_mat):
+	def roll_mat(self, list_of_mat):
 		'''Rolls the list of theta matrix into one dimension array(vector)
 		Input: List of theta matrix of network
 		Return: vector of theta'''
@@ -71,7 +76,7 @@ class neural_network(object):
 					vector.append(col)
 		return vector
 
-	def unroll_vector(self,theta_vector):
+	def unroll_vector(self, theta_vector):
 		'''Converts theta vector into list of theta matrix corresponding to
 		network.
 		Input: vector consisting of theta of all layers
