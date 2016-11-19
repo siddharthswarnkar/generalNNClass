@@ -14,7 +14,7 @@ def grad_descent(
         norm_lim=1e-6,
         epsilon=1e-10,
         order=2,
-        disp=True,
+        disp=False,
         period=10000):
     '''
     Gradient descent algorithm to optimize the cost function :

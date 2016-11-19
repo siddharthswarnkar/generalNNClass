@@ -1,4 +1,3 @@
-from __future__ import division
 from conjugate_gradient import conjugate_gradient as CG
 from hypothesis import given
 import nn
@@ -10,6 +9,7 @@ import unittest
 import pytest
 import node as nd
 import math
+import csv, random
 
 
 def simple_func(x):
@@ -116,8 +116,59 @@ class TestNeuralNet(unittest.TestCase):
         obj.change_network_theta(matrix)
         cost_func = obj.compute_cost(data, target)
         cost = cost_func(vec)
-        self.assertAlmostEqual(cost, 21, delta=1)
+        self.assertAlmostEqual(cost, 32, delta=1)
 
+        f = open('train.csv', 'r')
+        temp = csv.reader(f)
+        train_data = []
+        flag = 0
+        for row in temp:
+            if flag == 0:
+                flag = 1
+                continue
+            train_data.append([float(row[0]), float(row[1])])
+
+        f = open('test.csv', 'r')
+        temp = csv.reader(f)
+        test_data = []
+        flag = 0
+        for row in temp:
+            if flag == 0:
+                flag = 1
+                continue
+            test_data.append([float(row[0]), float(row[1])])
+
+        f = open('train_target.csv', 'r')
+        temp = csv.reader(f)
+        target_train = []
+        flag = 0
+        for row in temp:
+            if flag == 0:
+                flag = 1
+                continue
+            target_train.append([float(row[0]), float(row[1])])    
+
+        f = open('test_target.csv', 'r')
+        temp = csv.reader(f)
+        target_test = []
+        flag = 0
+        for row in temp:
+            if flag == 0:
+                flag = 1
+                continue
+            target_test.append([float(row[0]), float(row[1])])    
+
+        train_data = train_data[0:100]
+        target_train = target_train[0:100]
+
+        circle = nn.neural_network([2,4,2], activation_func='tanh')
+        circle.train(train_data, target_train)
+        prediction = np.array(circle.predict([1,1]))
+        self.assertEqual(prediction, np.array([0,1]).all())
+
+
+
+'''
 ###################### node.py ######################
 
 
@@ -384,6 +435,6 @@ class TestHelpers(unittest.TestCase):
         self.assertAlmostEqual(hlp.vecnorm(vector), np.sqrt(55))
         self.assertEqual(hlp.vecnorm(vector, order=np.Inf), 5)
         self.assertEqual(hlp.vecnorm(vector, order=-np.Inf), 1)
-
+'''
 if __name__ == '__main__':
     pass
