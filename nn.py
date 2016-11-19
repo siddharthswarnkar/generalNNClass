@@ -135,7 +135,7 @@ class neural_network(object):
 				for i in range(num_data):
 					output = self.predict(data[i], give_confidence=True)
 					for j in range(self.list_of_layers[-1]):
-						result += (-1/num_data)*( (target[i][j]+1)*0.5 * math.log( (output[j]+1)*0.5 ) + ( 1 - (target[i][j]+1)*0.5 ) * math.log(1- (output[j]+1)*0.5) )
+						result += (-1/num_data)*( target[i][j]* math.log( (output[j]+1)*0.5 ) + ( 1 - target[i][j]) * math.log(1- (output[j]+1)*0.5) )
 
 				for theta_mat in list_of_theta_mat:
 					for elem_list in theta_mat:
@@ -221,7 +221,7 @@ class neural_network(object):
 
 			theta_0 = self.roll_mat([self.construct_theta_mat(j) for j in range(1,self.num_layers)])
 
-			theta = optimize(cost, x0=theta_0, period=500, norm_lim=0.001, alpha=0.03)
+			theta = optimize(cost, x0=theta_0, fprime=grad_cost, period=250, norm_lim=0.01, alpha=0.05, disp=True)
 
 			positive = 0
 			num_examples = len(cv_set)
