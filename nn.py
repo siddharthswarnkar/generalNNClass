@@ -44,6 +44,19 @@ class neural_network(object):
 			res.append(self.nodes[layer_num][i].compute_output(prev_layer_output))
 		return res
 
+ 
+	def construct_theta_mat(self,layer_num):
+		'''Returns theta matrix of the given layer'''
+		theta_mat = []
+		if layer_num != self.num_layers-1:
+			for i in range(1,self.list_of_layers[layer_num]+1):
+				theta_mat.append(self.nodes[layer_num][i].get_theta())
+			return theta_mat
+		for i in range(self.list_of_layers[layer_num]):
+			theta_mat.append(self.nodes[layer_num][i].get_theta())
+		return theta_mat
+ 
+
 	def forward_propogation(self, x):
 		'''Performs forward propogation
 		Input: Data point
@@ -80,23 +93,23 @@ class neural_network(object):
 		'''Converts theta vector into list of theta matrix corresponding to
 		network.
 		Input: vector consisting of theta of all layers
-		Output: List of theta matrix like [theta_mat1, theat_mat2, ..]'''
-
-	    list_of_theta_mat = []
-	    start = 0
-	    list_of_layers = self.list_of_layers
-	    for i in range(1,self.num_layers):
-	        theta_mat = []
-	        size = list_of_layers[i]*(list_of_layers[i-1]+1)
-	        theta_rolled = theta_vector[start:start+size]
-	        for row in range(list_of_layers[i]):
-	            temp = []
-	            for col in range(list_of_layers[i-1]+1):
-	                temp.append(theta_rolled[row*(list_of_layers[i-1]+1) + col])
-	            theta_mat.append(temp)
-	        list_of_theta_mat.append(theta_mat)
-	        start += size
-	    return list_of_theta_mat
+		Output: List of theta matrix like [theta_mat1, theat_mat2, ..]
+		'''
+		list_of_theta_mat = []
+		start = 0
+		list_of_layers = self.list_of_layers
+		for i in range(1,self.num_layers):
+		    theta_mat = []
+		    size = list_of_layers[i]*(list_of_layers[i-1]+1)
+		    theta_rolled = theta_vector[start:start+size]
+		    for row in range(list_of_layers[i]):
+		        temp = []
+		        for col in range(list_of_layers[i-1]+1):
+		            temp.append(theta_rolled[row*(list_of_layers[i-1]+1) + col])
+		        theta_mat.append(temp)
+		    list_of_theta_mat.append(theta_mat)
+		    start += size
+		return list_of_theta_mat
 	
 	def predict(self, x, give_confidence=False):
 		'''Predicts the value of network given new data
