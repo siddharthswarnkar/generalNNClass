@@ -343,8 +343,8 @@ class neural_network(object):
 			grad_cost = self.back_propogation(train_set, target_train, lambd)
 
 			theta_0 = self.roll_mat([self.construct_theta_mat(j) for j in range(1,self.num_layers)])
-			
-			theta = optimize(cost, x0=theta_0, fprime=grad_cost, norm_lim=0.01, alpha=0.05)
+
+			theta = optimize(cost, x0=theta_0, fprime=grad_cost, norm_lim=0.01, alpha=0.05, disp=False, period=100)
 
 			positive = 0
 			num_examples = len(cv_set)
