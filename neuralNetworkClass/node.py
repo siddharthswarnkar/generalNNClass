@@ -3,35 +3,70 @@ import random
 
 
 def sigmoid(theta, x):
-    '''Standard sigmoid function = 1/(1+exp(-x))
-    Input: vector or scalar
-    Return: sigmoid of x'''
+    """
+    Standard sigmoid function = 1/(1+exp(-x))
+
+    Input : 
+        theta :
+            vector or scalar
+        x :
+            vector or scalar
+        Vector dimensions should be same              
+    Return : float
+        sigmoid of theta.T*x
+    """
 
     return 1 / (1 + np.exp(-np.dot(np.array(theta), np.array(x))))
 
 
 def sigmoid_prime(theta, x):
-    '''Derivative of sigmoid at x
-    Input: scalar or vector
-    Return: derivative of sigmoid at x'''
+    """
+    Derivative of sigmoid at x
+    
+    Input : 
+        theta :
+            vector or scalar
+        x :
+            vector or scalar
+        Vector dimensions should be same              
+    Return : float
+        derivative of sigmoid at theta.T*x 
+    """
 
     ans = sigmoid(theta, x)
     return ans * (1 - ans)
 
 
 def tanh(theta, x):
-    '''standard tanh function
-    Input: scalar or vector
-    Return: tanh(x)'''
+    """
+    Standard tanh function
+    
+    Input : 
+        theta :
+            vector or scalar
+        x :
+            vector or scalar
+        Vector dimensions should be same
+    Return: float
+        tanh(x)
+    """
 
     t = np.dot(np.array(theta), np.array(x))
     return (np.exp(t) - np.exp(-t)) / (np.exp(t) + np.exp(-t))
 
 
 def tanh_prime(theta, x):
-    '''Derivative of tanh(x)
-    Input: scalar or vector
-    Return: derivative of tanh at x'''
+    """Derivative of tanh(x)
+    
+    Input : 
+        theta :
+            vector or scalar
+        x :
+            vector or scalar
+        Vector dimensions should be same
+    Return: float 
+        derivative of tanh at x
+    """
 
     return 1 - tanh(theta, x)**2
 
@@ -58,8 +93,12 @@ class node(object):
             self.inpt = True
 
     def change_theta(self, theta):
-        '''Change weights(theta) of node
-        Input: new weights'''
+        """
+        Change weights(theta) of node
+        
+        Input: float array
+            new weights
+        """
 
         if not self.bias:
             self.theta = theta
@@ -67,12 +106,12 @@ class node(object):
             self.theta = None
 
     def get_theta(self):
-        '''returns theta of node'''
+        """Returns theta of node"""
 
         return self.theta
 
     def compute_output(self, x=None):
-        '''applies activation on input and returns'''
+        """Applies activation on input and returns"""
 
         if not self.bias:
             if not self.inpt:

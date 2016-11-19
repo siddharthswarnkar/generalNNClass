@@ -4,11 +4,17 @@ import copy
 
 
 def compute_numerical_grad(func, num_vars, epsilon=1e-10):
-    '''Computes numerical gradiet based on forward difference
+    """
+    Computes numerical gradiet based on forward difference
+    
     Input: 
-    func: function to find dirivative of 
-    num_vars: number of variables in the func
-    epsilon: difference value'''
+    func : function
+        function to find dirivative of func
+    num_vars : int 
+        number of variables in the func
+    epsilon : float
+        difference value
+    """
 
     def grad(x, *args):
         res = np.array([0.0] * num_vars)
@@ -23,7 +29,7 @@ def compute_numerical_grad(func, num_vars, epsilon=1e-10):
 
 
 def vecnorm(x, order=2):
-    '''computes and return vector norm'''
+    """computes and return vector norm"""
     if order == Inf:
         return np.amax(np.abs(x))
     elif order == -Inf:
