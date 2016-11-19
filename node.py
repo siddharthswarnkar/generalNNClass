@@ -2,17 +2,33 @@ import numpy as np
 import random 
 
 def sigmoid(theta, x):
+	'''Standard sigmoid function = 1/(1+exp(-x))
+	Input: vector or scalar
+	Return: sigmoid of x'''
+
 	return 1/(1 + np.exp(-np.dot(np.array(theta), np.array(x))))
 
 def sigmoid_prime(theta,x):
+	'''Derivative of sigmoid at x
+	Input: scalar or vector
+	Return: derivative of sigmoid at x'''
+
 	ans = sigmoid(theta,x)
 	return ans*(1-ans)
 
 def tanh(theta, x):
+	'''standard tanh function
+	Input: scalar or vector
+	Return: tanh(x)'''
+
 	t = np.dot(np.array(theta), np.array(x))
 	return (np.exp(t) - np.exp(-t))/(np.exp(t) + np.exp(-t)) 
 
 def tanh_prime(theta,x):
+	'''Derivative of tanh(x)
+	Input: scalar or vector
+	Return: derivative of tanh at x'''
+
 	return 1-tanh(theta,x)**2
 
 
@@ -38,15 +54,22 @@ class node(object):
 			self.inpt = True
 
 	def change_theta(self, theta):
+		'''Change weights(theta) of node
+		Input: new weights'''
+
 		if not self.bias:
 			self.theta = theta
 		else:
 			self.theta = None
 
 	def get_theta(self):
+		'''returns theta of node'''
+
 		return self.theta
 
 	def compute_output(self, x=None):
+		'''applies activation on input and returns'''
+		
 		if not self.bias:
 			if not self.inpt:
 				if len(x) != len(self.theta):
