@@ -9,6 +9,11 @@ import math
 class neural_network(object):
 
 	def __init__(self, list_of_layers, activation_func='sigmoid'):
+		'''Inilialize neural network
+		Input:
+		list_of_layers: list of number of nodes in each layer starting with input to output layer
+		activation_fucn: sigmoid or tanh'''
+
 		num_layers = len(list_of_layers)
 		self.num_layers = num_layers
 		self.list_of_layers = list_of_layers
@@ -46,7 +51,7 @@ class neural_network(object):
 
  
 	def construct_theta_mat(self,layer_num):
-		'''Returns theta matrix of the given layer'''
+		'''Returns theta matrix of the given layer'''	
 		theta_mat = []
 		if layer_num != self.num_layers-1:
 			for i in range(1,self.list_of_layers[layer_num]+1):
@@ -113,8 +118,11 @@ class neural_network(object):
 	
 	def predict(self, x, give_confidence=False):
 		'''Predicts the value of network given new data
-		Input: Input vector i.e. feature vector
-		Output: Probability corresponding to each class'''
+		Input: 
+		Input vector i.e. feature vector
+		Output:
+		give_confidence: if True then Probability corresponding to each class
+						else: Gives a binary vector'''
 
 		prev_layer_output = [self.nodes[0][0].compute_output()]
 		for i in range(1,self.list_of_layers[0]+1):
@@ -174,14 +182,14 @@ class neural_network(object):
 				for i in range(num_data):
 					output = self.predict(data[i], give_confidence=True)
 					for j in range(self.list_of_layers[-1]):
-						result += (-1/num_data)*( (target[i][j]+1)*0.5 * math.log( (output[j]+1)*0.5 ) + ( 1 - (target[i][j]+1)*0.5 ) * math.log(1- (output[j]+1)*0.5) )
+						result += (-1/num_data)*( target[i][j]* math.log( (output[j]+1)*0.5 ) + ( 1 - target[i][j]) * math.log(1- (output[j]+1)*0.5) )
 
 				for theta_mat in list_of_theta_mat:
 					for elem_list in theta_mat:
 						for elem in elem_list[1:]:
 							result += (lambd/(2*num_data))*elem**2 
 				return result
-		return cost	
+		return cost
 
 	def back_propogation(self, data, target, lambd=0.5):
 		'''Finds derivative of cost function
@@ -242,7 +250,7 @@ class neural_network(object):
 		'''Trains the network for given data and target
 		Input: data and corresponding target
 		optim_func: Optimization function to train fucntion with.(gradient_descent, conjugate_gradient)
-		k: cross validation 
+		k: k-fold cross validation 
 		lambd: regularization factor'''
 
 		if optim_func == 'gradient_descent':
