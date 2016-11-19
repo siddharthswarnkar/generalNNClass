@@ -1,5 +1,3 @@
-# generalNNClass
-
 General Neural Network Class
 ==============================
 This class can be used to train neural network of different configuration of input, hidden layers and output layer.
