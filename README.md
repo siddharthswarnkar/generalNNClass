@@ -7,8 +7,8 @@ This project aims to provide a class to develop and train neural network. This w
 To use the class, you need *numpy* to be installed in your system.
 
 To install the utility use the following command line statement
-```shell
-	pip install git+https://github.com/siddharthswarnkar/generalNNClass
+```
+pip install git+https://github.com/siddharthswarnkar/generalNNClass
 ```
 Usage
 ```python
