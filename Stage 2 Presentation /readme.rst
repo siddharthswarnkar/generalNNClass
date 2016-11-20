@@ -15,7 +15,9 @@ Different optimization and and activation functions have been provided such as:
   + Tanh
 
 Usage
-```python
+
+.. code-block:: python
+
    form nn import *
    neralNetObj = neural_network([2,3,2,4], activation_func='tanh')
    data = [[1,1], [2,2], [3,3], [4,4], [5,5], [6,6], [7,7], [8,8]]
@@ -34,4 +36,3 @@ Usage
    neuralNetOjb.change_network_theta(matrix)
    neuralNetObj.train(data,target)
    neuralNetObj.predict([2,3])
-```
