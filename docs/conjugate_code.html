@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Conjugate Gradient &#8212; Neural Network Class 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Neural Network Class 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Helper functions" href="helper_code.html" />
+    <link rel="prev" title="Gradient Descent" href="grad_code.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="helper_code.html" title="Helper functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grad_code.html" title="Gradient Descent"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Neural Network Class 1.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-neuralNetworkClass.conjugate_gradient.conjugate_gradient">
+<span id="conjugate-gradient"></span><h1>Conjugate Gradient<a class="headerlink" href="#module-neuralNetworkClass.conjugate_gradient.conjugate_gradient" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="neuralNetworkClass.conjugate_gradient.conjugate_gradient.conjugate_gradient">
+<code class="descclassname">neuralNetworkClass.conjugate_gradient.conjugate_gradient.</code><code class="descname">conjugate_gradient</code><span class="sig-paren">(</span><em>func</em>, <em>x0</em>, <em>args=()</em>, <em>fprime=None</em>, <em>alpha=0.5</em>, <em>scaling_factor=0.8</em>, <em>numIter=100000.0</em>, <em>norm_lim=1e-07</em>, <em>epsilon=1e-10</em>, <em>order=2</em>, <em>disp=False</em>, <em>period=10000</em><span class="sig-paren">)</span><a class="headerlink" href="#neuralNetworkClass.conjugate_gradient.conjugate_gradient.conjugate_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conjugate descent algorithm to optimize the cost function using Fletcher-Reeves Update
+Usage:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>func</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">function</span><dd>function to be optimized</dd>
+<dt>x0</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>initial guess</dd>
+<dt>args</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier"></span><dd>other arguments to be passed to func</dd>
+<dt>fprime</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">function</span><dd>derivative or jacobian of func, if not passed then will be generated automatically</dd>
+<dt>alpha</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>learning rate</dd>
+<dt>scaling_factor</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>factor to multiply alpha with when doing line search</dd>
+<dt>numIter</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>number of iterations</dd>
+<dt>norm_lim</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>minimum value of norm</dd>
+<dt>epsilon</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>delta x for calculting fprime</dd>
+<dt>order</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>order of norm, max value = Inf</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="go">        return pow(x[0]-2,6.0)+pow(x[1]-3,6.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">point_of_optima</span> <span class="o">=</span> <span class="n">conjugate_gradient</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">x0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="grad_code.html"
+                        title="previous chapter">Gradient Descent</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="helper_code.html"
+                        title="next chapter">Helper functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/conjugate_code.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="helper_code.html" title="Helper functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grad_code.html" title="Gradient Descent"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Neural Network Class 1.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, M Suriya Kumar, Siddharth Swarnkar.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>
