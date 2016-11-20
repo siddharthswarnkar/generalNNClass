@@ -1,19 +1,15 @@
+============================
 General Neural Network Class
-==============================
-This class can be used to train neural network of different configuration of input, hidden layers and output layer.
+============================
 
-Different optimization and and activation functions have been provided such as:
+This project aims to provide a class to develop and train neural network. This was created for the course AE663 SDES. Read the further documentation to find methods to use this utility.
 
-- Optimization
+To use the class, you need *numpy* to be installed in your system.
 
-  + Conjugate Gradient Descent 
-  + Gradient Descent
-
-- Activation Finctions
-
-  + Sigmoid
-  + Tanh
-
+To install the utility use the following command line statement
+```shell
+	pip install git+https://github.com/siddharthswarnkar/generalNNClass
+```
 Usage
 ```python
    form nn import *
