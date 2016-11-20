@@ -50,6 +50,12 @@ How to create and train the neural network ?
 
 To illustrate the neural network class we try to solve binary classifying problem described using the following figure.
 
+.. image:: train.png
+   :scale: 100 %
+   
+.. image:: test.png
+   :scale: 100 %
+   
 Data for the class is created using the following code  
 	
 .. code-block:: python
