@@ -1,5 +1,5 @@
 Helper functions
 ================
 
-.. automodule:: helper
+.. automodule:: neuralNetworkClass.helper.helper
 	:members:

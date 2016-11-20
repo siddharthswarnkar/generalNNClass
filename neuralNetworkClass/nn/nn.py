@@ -1,8 +1,8 @@
-import conjugate_gradient as cg
-import grad_descent as gd
-import helper as hlp
+import neuralNetworkClass.conjugate_gradient as cg
+import neuralNetworkClass.grad_descent as gd
+import neuralNetworkClass.helper as hlp
 import numpy as np
-import node as nd
+import neuralNetworkClass.node as nd
 import math
 
 

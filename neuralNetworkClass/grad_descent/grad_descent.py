@@ -1,6 +1,6 @@
 import numpy as np
 import math
-import helper as hlp
+import neuralNetworkClass.helper as hlp
 
 def grad_descent(
         func,

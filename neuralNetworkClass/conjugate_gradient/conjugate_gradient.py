@@ -1,4 +1,4 @@
-import helper as hlp
+import neuralNetworkClass.helper as hlp
 import numpy as np
 
 

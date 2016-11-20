@@ -1,13 +1,14 @@
-from conjugate_gradient import conjugate_gradient as CG
+import neuralNetworkClass
+from neuralNetworkClass.conjugate_gradient import conjugate_gradient as CG
 from hypothesis import given
-import nn
+import neuralNetworkClass.nn as nn
 from hypothesis import strategies
-import helper as hlp
-import grad_descent
+import neuralNetworkClass.helper as hlp
+import neuralNetworkClass.grad_descent as grad_descent
 import numpy as np
 import unittest
 import pytest
-import node as nd
+import neuralNetworkClass.node as nd
 import math
 import csv, random
 

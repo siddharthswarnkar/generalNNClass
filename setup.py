@@ -11,7 +11,6 @@ setup(
         url="https://github.com/siddharthswarnkar/generalNNClass",
         author="M Suriya Kumar, Siddharth Swarnkar",
         author_email="msuriyak.2495@gmail.com, siddharthswarnkar@gmail.com",
-        license="GPL3",
         install_requires=requires,
         packages=find_packages(),
         )

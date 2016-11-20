@@ -1,5 +1,5 @@
 Gradient Descent
 ================
 
-.. automodule:: grad_descent
+.. automodule:: neuralNetworkClass.grad_descent.grad_descent
 	:members:
