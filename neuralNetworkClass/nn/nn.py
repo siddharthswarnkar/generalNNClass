@@ -326,7 +326,9 @@ class neural_network(object):
 		num_data = len(data)	
 		accuracy = 0
 		max_accuracy = 0
+		print('k-fold cross-validation, k =', k, '\n')
 		for iter_num in range(k):
+			print('Iteration for cross-validation i =', iter_num + 1)
 			cv_set = []
 			train_set = []
 			target_cv = []
@@ -344,7 +346,7 @@ class neural_network(object):
 
 			theta_0 = self.roll_mat([self.construct_theta_mat(j) for j in range(1,self.num_layers)])
 
-			theta = optimize(cost, x0=theta_0, fprime=grad_cost, norm_lim=0.01, alpha=0.05, disp=False, period=100)
+			theta = optimize(cost, x0=theta_0, fprime=grad_cost, norm_lim=0.01, alpha=0.05, disp=True, period=100)
 
 			positive = 0
 			num_examples = len(cv_set)
