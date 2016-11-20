@@ -11,6 +11,7 @@ import pytest
 import neuralNetworkClass.node as nd
 import math
 import csv, random
+import os
 
 
 def simple_func(x):
@@ -119,7 +120,13 @@ class TestNeuralNet(unittest.TestCase):
         cost = cost_func(vec)
         self.assertAlmostEqual(cost, 4.1, delta=1)
 
-        f = open('train.csv', 'r')
+        pwd = os.path.split(os.getcwd())[-1]
+        if pwd == 'tests':
+        	abspath = os.getcwd() + '/'
+        else:
+        	abspath = os.getcwd() + '/tests/'
+
+        f = open(abspath + 'train.csv', 'r')
         temp = csv.reader(f)
         train_data = []
         flag = 0
@@ -129,7 +136,7 @@ class TestNeuralNet(unittest.TestCase):
                 continue
             train_data.append([float(row[0]), float(row[1])])
 
-        f = open('test.csv', 'r')
+        f = open(abspath + 'test.csv', 'r')
         temp = csv.reader(f)
         test_data = []
         flag = 0
@@ -139,7 +146,7 @@ class TestNeuralNet(unittest.TestCase):
                 continue
             test_data.append([float(row[0]), float(row[1])])
 
-        f = open('train_target.csv', 'r')
+        f = open(abspath + 'train_target.csv', 'r')
         temp = csv.reader(f)
         target_train = []
         flag = 0
@@ -149,7 +156,7 @@ class TestNeuralNet(unittest.TestCase):
                 continue
             target_train.append([float(row[0]), float(row[1])])    
 
-        f = open('test_target.csv', 'r')
+        f = open(abspath + 'test_target.csv', 'r')
         temp = csv.reader(f)
         target_test = []
         flag = 0
