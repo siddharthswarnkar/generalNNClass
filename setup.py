@@ -12,5 +12,6 @@ setup(
         author="M Suriya Kumar, Siddharth Swarnkar",
         author_email="msuriyak.2495@gmail.com, siddharthswarnkar@gmail.com",
         install_requires=requires,
+        test_suite="tests", 
         packages=find_packages(),
         )
